@@ -1,26 +1,42 @@
 package com.example.flashcard
 
 enum class Action {
-    ADD,
-    UPDATE,
-    DELETE,
-    UNDO,
-    NO_ACTION
+    ADD_CARD,
+    UPDATE_CARD,
+    DELETE_CARD,
+    UNDO_CARD,
+    NO_ACTION,
+    ADD_FOLDER,
+    UPDATE_FOLDER,
+    DELETE_FOLDER,
+    UNDO_FOLDER
 }
 
 fun String?.toAction(): Action{
     return when {
-        this == "ADD" -> {
-            Action.ADD
+        this == "ADD_CARD" -> {
+            Action.ADD_CARD
         }
-        this == "UPDATE" -> {
-            Action.UPDATE
+        this == "UPDATE_CARD" -> {
+            Action.UPDATE_CARD
         }
-        this == "DELETE" -> {
-            Action.DELETE
+        this == "DELETE_CARD" -> {
+            Action.DELETE_CARD
         }
-        this == "UNDO" -> {
-            Action.UNDO
+        this == "UNDO_CARD" -> {
+            Action.UNDO_CARD
+        }
+        this == "ADD_FOLDER" -> {
+            Action.ADD_FOLDER
+        }
+        this == "UPDATE_FOLDER" -> {
+            Action.UPDATE_FOLDER
+        }
+        this == "DELETE_FOLDER" -> {
+            Action.DELETE_FOLDER
+        }
+        this == "UNDO_FOLDER" -> {
+            Action.UNDO_FOLDER
         }
         this == "NO_ACTION" -> {
             Action.NO_ACTION

@@ -1,12 +1,12 @@
 package com.example.flashcard.ui.theme.screens.list
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.flashcard.Action
 import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.TrailingIconState
@@ -27,13 +28,14 @@ import com.example.flashcard.database.CardViewModel
 fun ListAppBar(
     cardViewModel: CardViewModel,
     searchAppBarState: SearchAppBarState,
-    searchTextState: String
+    searchTextState: String,
+    navigateToFolderListScreen: (Action) -> Unit
 ) {
     when(searchAppBarState){
         SearchAppBarState.CLOSED -> {
             DefaultListAppBar(onSearchClicked = {
                 cardViewModel.searchAppBarState.value = SearchAppBarState.OPENED
-            })
+            }, navigateToFolderListScreen = navigateToFolderListScreen)
         }
 
     else-> {
@@ -42,7 +44,7 @@ fun ListAppBar(
             onTextChange = {newText-> cardViewModel.searchTextState.value = newText},
             onCloseClicked = {cardViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
                              cardViewModel.searchTextState.value = ""},
-            onSearchClicked = {cardViewModel.searchDatabase(searchQuery = it)}
+            onSearchClicked = {cardViewModel.searchDatabaseCard(searchQuery = it)}
         )
     }
     }
@@ -50,8 +52,12 @@ fun ListAppBar(
 }
 
 @Composable
-fun DefaultListAppBar(onSearchClicked: ()-> Unit){
-    TopAppBar(title = {
+fun DefaultListAppBar(onSearchClicked: ()-> Unit, navigateToFolderListScreen: (Action) -> Unit){
+    TopAppBar(navigationIcon = {
+        BackAction(
+            onBackClicked = navigateToFolderListScreen
+        )
+    },title = {
         Text(text = stringResource(id = R.string.list_screen_title))
     },
         actions={
@@ -145,17 +151,8 @@ fun SearchAppBar(
 }
 
 @Composable
-@Preview
-private fun DefaultListAppBarPreview(){
-    DefaultListAppBar(onSearchClicked = {})
-}
-
-@Composable
-@Preview
-private fun SearchAppBarPreview(){
-    SearchAppBar(text = "",
-        onTextChange = {},
-        onCloseClicked = {},
-        onSearchClicked = {}
-    )
+fun BackAction(onBackClicked: (Action)-> Unit){
+    IconButton(onClick = {onBackClicked(Action.NO_ACTION)}) {
+        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
+    }
 }

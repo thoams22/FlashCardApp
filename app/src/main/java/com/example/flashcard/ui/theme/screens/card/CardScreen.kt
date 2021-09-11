@@ -1,6 +1,7 @@
 package com.example.flashcard.ui.theme.screens.card
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -14,24 +15,24 @@ import com.example.flashcard.database.CardViewModel
 @Composable
 fun CardScreen(
     selectedCard: Card?,
-    navigateToListScreen: (Action)->Unit,
-    cardViewModel: CardViewModel){
+    navigateToListScreen: (action: Action, String)->Unit,
+    cardViewModel: CardViewModel, folderName: String){
 
     val question: String by cardViewModel.question
     val reponse: String by cardViewModel.reponse
 
     val context = LocalContext.current
-
     Scaffold(
     topBar = {
         CardAppBar(
+            folderName = folderName,
             selectedCard = selectedCard,
-            navigateToListScreen = { action ->
+            navigateToListScreen = { action, string ->
                 if(action == Action.NO_ACTION){
-                    navigateToListScreen(action)
+                    navigateToListScreen(action, string)
                 }else{
                     if (cardViewModel.validateFields()){
-                        navigateToListScreen(action)
+                        navigateToListScreen(action, string)
                         }else{
                             displayToast(context = context)
                         }

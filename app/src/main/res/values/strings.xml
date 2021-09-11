@@ -2,7 +2,7 @@
     <string name="app_name">FlashCard</string>
     <string name="search_actions">Search Tasks</string>
     <string name="add_button">Add Button</string>
-    <string name="list_screen_title">Tasks</string>
+    <string name="list_screen_title">FlashCard</string>
     <string name="search_place_holder">Search</string>
     <string name="serch_icons">Search Icon</string>
     <string name="close_icons">Close Icon</string>
@@ -18,4 +18,6 @@
     <string name="no">No</string>
     <string name="delete_card">Remove \'%1$s\'?</string>
     <string name="delete_card_confirmation">Are you sure you want to delete \'%1$s\'?</string>
+    <string name="add_folder">Add folder</string>
+    <string name="folderName">Name of folder</string>
 </resources>

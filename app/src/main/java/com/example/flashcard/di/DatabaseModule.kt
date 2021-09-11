@@ -27,5 +27,6 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun  provideDao(database: CardDatabase) = database.cardDatabaseDao()
+    fun provideDao(database: CardDatabase) = database.cardDatabaseDao()
+
 }

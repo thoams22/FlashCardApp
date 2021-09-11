@@ -1,13 +1,10 @@
 package com.example.flashcard.ui.theme.screens
 
-import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.flashcard.Action
 import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
@@ -20,16 +17,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
-    cardViewModel: CardViewModel
+    cardViewModel: CardViewModel,
+    navigateToFolderListScreen: (Action)-> Unit,
+    selectedFolder: String?
 )
-{
-    LaunchedEffect(key1 = true){
-        cardViewModel.readAll()
+{    LaunchedEffect(key1 = true){
+    if (selectedFolder != null) {
+        cardViewModel.getFolderWithCards(selectedFolder)
+    }
     }
 
     val action by cardViewModel.action
 
-    val cardList by cardViewModel.allCards.collectAsState()
+    val folderWithCardsList by cardViewModel.getFolderWithCards.collectAsState()
     val searchedCard by cardViewModel.searchCards.collectAsState()
     val searchAppBarState: SearchAppBarState by cardViewModel.searchAppBarState
     val searchTextState: String by cardViewModel.searchTextState
@@ -49,18 +49,22 @@ Scaffold(
         ListAppBar(
             cardViewModel = cardViewModel,
             searchAppBarState = searchAppBarState,
-            searchTextState = searchTextState
+            searchTextState = searchTextState,
+            navigateToFolderListScreen= navigateToFolderListScreen
         )
     },
-    content = {ListContent(
-        cards=cardList,
+    content = {
+        ListContent(
+        cards=folderWithCardsList,
         navigateToTaskScreen = navigateToTaskScreen,
         searchedCards = searchedCard,
         searchAppBarState = searchAppBarState,
         onSwipeToDelete = {
             action, card ->
             cardViewModel.action.value = action
-            cardViewModel.update(selectedCard = card)
+            if (selectedFolder != null) {
+                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolder=selectedFolder)
+            }
         }
     )},
     floatingActionButton = {
@@ -108,8 +112,8 @@ fun DisplaySnackBar(
 }
 
 private fun setActionLabel(action: Action): String{
-    return if(action.name == "DELETE"){
-        "UNDO"
+    return if(action.name == "DELETE_CARD"){
+        "UNDO_CARD"
     }else{
         return "OK"
     }
@@ -120,7 +124,7 @@ private fun undoDeletedCard(
     snackBarResult: SnackbarResult,
     onUndoClicked: (Action)-> Unit
 ){
-    if (snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE){
-        onUndoClicked(Action.UNDO)
+    if (snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE_CARD){
+        onUndoClicked(Action.UNDO_CARD)
     }
 }

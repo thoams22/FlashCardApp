@@ -1,5 +1,6 @@
 package com.example.flashcard.ui.theme.screens.card
 
+import android.util.Log
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -13,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.flashcard.Action
 import com.example.flashcard.DisplayAlertDialog
 import com.example.flashcard.R
@@ -22,23 +22,24 @@ import com.example.flashcard.database.Card
 @Composable
 fun CardAppBar(
     selectedCard: Card?,
-    navigateToListScreen: (Action)->Unit){
+    folderName: String,
+    navigateToListScreen: (Action, String)->Unit){
     if(selectedCard == null){
-        NewCardAppBar(navigateToListScreen = navigateToListScreen)
+        NewCardAppBar(navigateToListScreen = navigateToListScreen,folderName=folderName)
     }else{
         ExistingCardAppBar(selectedCard = selectedCard,navigateToListScreen = navigateToListScreen)
     }
 }
 
 @Composable
-fun NewCardAppBar(navigateToListScreen: (Action)->Unit){
+fun NewCardAppBar(navigateToListScreen: (Action,String)->Unit, folderName: String){
     TopAppBar(
-        navigationIcon = { BackAction(onBackClicked = navigateToListScreen)},
+        navigationIcon = { BackAction(onBackClicked = navigateToListScreen, folderName=folderName)},
         title = {
         Text(text = stringResource(id = R.string.add_card))
     },
         actions = {
-            AddAction(onBackClicked = navigateToListScreen)
+            AddAction(onBackClicked = navigateToListScreen, folderName=folderName)
         }
     )
 }
@@ -46,9 +47,9 @@ fun NewCardAppBar(navigateToListScreen: (Action)->Unit){
 @Composable
 fun ExistingCardAppBar(
     selectedCard: Card,
-    navigateToListScreen: (Action)->Unit){
+    navigateToListScreen: (Action,String)->Unit){
     TopAppBar(
-        navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen) },
+        navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen, folderName=selectedCard.folderName) },
         title = {
             Text(
                 text = selectedCard.question,
@@ -68,7 +69,7 @@ fun ExistingCardAppBar(
 @Composable
 fun ExistingCardAppBarAction(
     selectedCard: Card,
-    navigateToListScreen: (Action)->Unit
+    navigateToListScreen: (Action,String)->Unit
 ){
     var openDialog by remember {
         mutableStateOf(false)
@@ -81,28 +82,29 @@ fun ExistingCardAppBarAction(
         ),
         openDialog = openDialog,
         closeDialog = { openDialog = false },
-        onYesClicked = { navigateToListScreen(Action.DELETE)}
+        onYesClicked = { navigateToListScreen(Action.DELETE_CARD, selectedCard.folderName)}
     )
 
     DeleteAction(onDeleteClicked = {openDialog = true})
-    UpdateAction(onUpdateClicked = navigateToListScreen)
+    UpdateAction(onUpdateClicked = navigateToListScreen, folderName= selectedCard.folderName)
 }
 
 @Composable
-fun AddAction(onBackClicked: (Action)-> Unit){
-    IconButton(onClick = {onBackClicked(Action.ADD)}) {
+fun AddAction(onBackClicked: (Action,String)-> Unit, folderName: String){
+    IconButton(onClick = {onBackClicked(Action.ADD_CARD,folderName)}) {
         Icon(imageVector = Icons.Filled.Check, contentDescription = stringResource(id = R.string.add_card))
     }
 }
 @Composable
-fun BackAction(onBackClicked: (Action)-> Unit){
-    IconButton(onClick = {onBackClicked(Action.NO_ACTION)}) {
+fun BackAction(onBackClicked: (Action,String)-> Unit, folderName: String){
+    IconButton(onClick = {onBackClicked(Action.NO_ACTION, folderName)}) {
         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
     }
 }
+
 @Composable
-fun CloseAction(onCloseClicked: (Action)-> Unit){
-    IconButton(onClick = {onCloseClicked(Action.NO_ACTION)}) {
+fun CloseAction(onCloseClicked: (Action,String)-> Unit, folderName: String){
+    IconButton(onClick = {onCloseClicked(Action.NO_ACTION, folderName)}) {
         Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(id = R.string.close_icons))
     }
 }
@@ -113,8 +115,8 @@ fun DeleteAction(onDeleteClicked: ()->Unit){
     }
 }
 @Composable
-fun UpdateAction(onUpdateClicked: (Action)-> Unit){
-    IconButton(onClick = {onUpdateClicked(Action.UPDATE)}) {
+fun UpdateAction(onUpdateClicked: (Action,String)-> Unit, folderName: String){
+    IconButton(onClick = {onUpdateClicked(Action.UPDATE_CARD,folderName)}) {
         Icon(imageVector = Icons.Filled.Check, contentDescription = stringResource(id = R.string.check_icon))
     }
 }
