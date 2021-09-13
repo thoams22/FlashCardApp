@@ -15,11 +15,13 @@ import com.example.flashcard.database.Folder
 fun FolderScreen(
     selectedFolder: Folder?,
     navigateToFolderListScreen: (Action)->Unit,
-    cardViewModel: CardViewModel
+    cardViewModel: CardViewModel,
+    navigateToListScreen: (Action, Int)-> Unit
 ){
-
     val folderName: String by cardViewModel.folderName
-
+    if (selectedFolder != null) {
+        cardViewModel.ancientFolderId.value = selectedFolder.folderId
+    }
     val context = LocalContext.current
 
     Scaffold(
@@ -28,14 +30,23 @@ fun FolderScreen(
                 navigateToFolderListScreen = { action ->
                     if(action == Action.NO_ACTION){
                         navigateToFolderListScreen(action)
-                    }else{
+                    } else{
                         if (cardViewModel.validateFolderFields()){
                             navigateToFolderListScreen(action)
                         }else{
                             displayToast(context = context)
                         }
                     }
-                }
+                }, navigateToListScreen = { action: Action, _: Int ->
+                    if(action == Action.NO_ACTION){
+                        navigateToListScreen(action, cardViewModel.ancientFolderId.value) }
+                    else{
+                    if (cardViewModel.validateFolderFields()){
+                        navigateToListScreen(action, cardViewModel.folderid.value)
+                    }else{
+                        displayToast(context = context)
+                    }
+                }}
             )
         },
         content = {

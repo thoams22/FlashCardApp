@@ -8,8 +8,7 @@ enum class Action {
     NO_ACTION,
     ADD_FOLDER,
     UPDATE_FOLDER,
-    DELETE_FOLDER,
-    UNDO_FOLDER
+    DELETE_FOLDER
 }
 
 fun String?.toAction(): Action{
@@ -34,9 +33,6 @@ fun String?.toAction(): Action{
         }
         this == "DELETE_FOLDER" -> {
             Action.DELETE_FOLDER
-        }
-        this == "UNDO_FOLDER" -> {
-            Action.UNDO_FOLDER
         }
         this == "NO_ACTION" -> {
             Action.NO_ACTION

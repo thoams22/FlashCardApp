@@ -1,8 +1,7 @@
 package com.example.flashcard.database
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 
 import androidx.lifecycle.viewModelScope
@@ -11,6 +10,7 @@ import com.example.flashcard.RequestState
 import com.example.flashcard.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -28,7 +28,7 @@ class CardViewModel @Inject constructor(
     val id: MutableState<Int> = mutableStateOf(0)
     val question: MutableState<String> = mutableStateOf("")
     val reponse: MutableState<String> = mutableStateOf("")
-
+    val folderid: MutableState<Int> = mutableStateOf(0)
 
     val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
     val searchTextState: MutableState<String> = mutableStateOf("")
@@ -42,7 +42,7 @@ class CardViewModel @Inject constructor(
         _searchCards.value = RequestState.Loading
         try {
             viewModelScope.launch{
-                repository.searchDatabaseCard(searchQuery = "%$searchQuery%", folderName = folderName.value)
+                repository.searchDatabaseCard(searchQuery = "%$searchQuery%", folderId = folderid.value)
                     .collect { searchCards->
                         _searchCards.value = RequestState.Success(searchCards)
                     }
@@ -68,7 +68,7 @@ class CardViewModel @Inject constructor(
             val card = Card(
                 question = question.value,
                 reponse = reponse.value,
-                folderName = folderName.value
+                folderId = folderid.value
             )
             repository.insertCard(card = card)
         }
@@ -81,7 +81,7 @@ class CardViewModel @Inject constructor(
                 cardId = id.value,
                 question = question.value,
                 reponse = reponse.value ,
-                folderName = folderName.value
+                folderId = folderid.value
             )
             repository.updateCard(card = card)
         }
@@ -93,9 +93,21 @@ class CardViewModel @Inject constructor(
                 cardId = id.value,
                 question = question.value,
                 reponse = reponse.value,
-                folderName = folderName.value
+                folderId = folderid.value
             )
             repository.deleteCard(card = card)
+        }
+    }
+
+    private fun deleteCard(card: Card){
+        viewModelScope.launch(Dispatchers.IO){
+            val carde  =Card(
+                cardId = card.cardId,
+                question = card.question,
+                reponse = card.reponse,
+                folderId = card.folderId
+            )
+            repository.deleteCard(card = carde)
         }
     }
 
@@ -122,26 +134,23 @@ class CardViewModel @Inject constructor(
             Action.DELETE_FOLDER->{
                 deleteFolder()
             }
-            Action.UNDO_FOLDER->{
-                insertFolder()
-            }
             else->{
             }
         }
         this.action.value = Action.NO_ACTION
     }
 
-    fun updateSelectedCard(selectedCard: Card?, selectedFolder: String){
+    fun updateSelectedCard(selectedCard: Card?, selectedFolderId: Int){
         if (selectedCard != null){
             id.value = selectedCard.cardId
             question.value = selectedCard.question
             reponse.value = selectedCard.reponse
-            folderName.value = selectedFolder
+            folderid.value = selectedCard.folderId
         }else{
             id.value = 0
             reponse.value = ""
             question.value = ""
-            folderName.value = selectedFolder
+            folderid.value = selectedFolderId
         }
     }
     fun validateFields(): Boolean{
@@ -170,6 +179,7 @@ class CardViewModel @Inject constructor(
     val searchFolders: StateFlow<RequestState<List<Folder>>> = _searchFolders
 
     val folderName: MutableState<String> = mutableStateOf("")
+    val ancientFolderId: MutableState<Int> = mutableStateOf(0)
 
     fun searchDatabaseFolder(searchQuery: String){
         _searchFolders.value = RequestState.Loading
@@ -187,14 +197,15 @@ class CardViewModel @Inject constructor(
     }
 
     fun updateSelectedFolder(selectedFolder: Folder?){
-
         if (selectedFolder != null){
+            folderid.value = selectedFolder.folderId
             folderName.value = selectedFolder.folderName
         }else{
+            folderid.value = 0
             folderName.value = ""
         }
         viewModelScope.launch{
-            repository.getSelectedFolder(folderName = folderName.value).collect {
+            repository.getSelectedFolder(folderId = folderid.value).collect {
                     folder-> _selectedFolder.value = folder}
         }
     }
@@ -203,9 +214,9 @@ class CardViewModel @Inject constructor(
     val selectedFolder: StateFlow<Folder?> = _selectedFolder
 
 
-    fun getSelectedFolder(folderName: String?){
+    fun getSelectedFolder(folderId: Int?){
         viewModelScope.launch{
-            repository.getSelectedFolder(folderName = folderName).collect {
+            repository.getSelectedFolder(folderId = folderId).collect {
                     folder-> _selectedFolder.value = folder}
         }
     }
@@ -221,31 +232,57 @@ class CardViewModel @Inject constructor(
     }
 
     private fun deleteFolder(){
-        viewModelScope.launch(Dispatchers.IO){
-            val folder  =Folder(
-                folderName = folderName.value
-            )
-            repository.deleteFolder(folder = folder)
-        }
+        getFolderWithCards(folderid.value)
+        val cardList = getFolderWithCards.value
+        deleteSelectedFolder(cardList)
     }
 
-    private fun updateSelectedFolder(){
+    private fun deleteSelectedFolder(card: RequestState<List<FolderWithCards>>){
+        if (card is RequestState.Success && card.data.isNotEmpty()){
+            card.data.first().cards.forEach{ car ->
+                deleteCard(car)
+            }
+            viewModelScope.launch(Dispatchers.IO){
+                val folder  =Folder(
+                    folderId = folderid.value,
+                    folderName = folderName.value
+                )
+                repository.deleteFolder(folder = folder)
+            }
+        }
+        getFolderWithCards(folderid.value)
+    }
+
+    private fun updateSelectedFolder(card: RequestState<List<FolderWithCards>>){
+        if (card is RequestState.Success){
+                card.data.first().cards.forEach{ car ->
+                    updateSelectedCard(car, folderid.value)
+                    updateSelectedCard()
+            }
         viewModelScope.launch(Dispatchers.IO){
             val folder  =Folder(
+                folderId = folderid.value,
                 folderName = folderName.value
             )
             repository.updateFolder(folder = folder)
         }
+        getFolderWithCards(folderid.value)
+    }}
+
+    private fun updateSelectedFolder(){
+        getFolderWithCards(ancientFolderId.value)
+        val cardList = getFolderWithCards.value
+        updateSelectedFolder(cardList)
     }
 
     private val  _getFolderWithCards = MutableStateFlow<RequestState<List<FolderWithCards>>>(RequestState.Idle)
     val getFolderWithCards: StateFlow<RequestState<List<FolderWithCards>>> = _getFolderWithCards
 
-    fun getFolderWithCards(folderName: String){
-        _getFolderWithCards.value = RequestState.Loading
+    fun getFolderWithCards(folderId: Int){
+        //_getFolderWithCards.value = RequestState.Loading
         try {
             viewModelScope.launch{
-                repository.getFolderWithCards(folderName = folderName).collect { _getFolderWithCards.value = RequestState.Success(it) }
+                repository.getFolderWithCards(folderId = folderId).collect { _getFolderWithCards.value = RequestState.Success(it) }
             }
         }catch (e: Exception){
             _getFolderWithCards.value = RequestState.Error(e)

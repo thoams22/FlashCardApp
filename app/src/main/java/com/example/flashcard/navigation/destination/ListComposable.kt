@@ -23,33 +23,32 @@ import com.example.flashcard.ui.theme.screens.ListScreen
 fun NavGraphBuilder.listComposable(
     navigateToTaskScreen: (CardId: Int) -> Unit,
     cardViewModel: CardViewModel,
-    navigateToFolderListScreen: (action: Action) -> Unit
+    navigateToFolderListScreen: (action: Action) -> Unit,
+    navigateToFolderScreen: (Int)-> Unit
 ){
     composable(
         route = LIST_SCREEN,
         arguments = listOf(navArgument(LIST_ARGUMENT_KEY){
-            type = NavType.StringType
+            type = NavType.IntType
         }, navArgument(LIST_ACTION_KEY){
             type = NavType.StringType
         })
     ){ navBackStackEntry->
         val action = navBackStackEntry.arguments!!.getString(LIST_ACTION_KEY).toAction()
-        val folderName = navBackStackEntry.arguments?.getString(LIST_ARGUMENT_KEY)
-        cardViewModel.getSelectedFolder(folderName = folderName)
+        val folderId = navBackStackEntry.arguments?.getInt(LIST_ARGUMENT_KEY)
+        cardViewModel.getSelectedFolder(folderId = folderId)
 
-        val selectedFolder by cardViewModel.selectedFolder.collectAsState()
-
-        LaunchedEffect(key1 = action, key2 = selectedFolder){
+        LaunchedEffect(key1 = action, key2 = folderId){
             cardViewModel.action.value = action
-            cardViewModel.updateSelectedFolder(selectedFolder=selectedFolder)
+            cardViewModel.getSelectedFolder(folderId=folderId)
         }
-
 
         ListScreen(
             navigateToTaskScreen = navigateToTaskScreen,
             cardViewModel = cardViewModel,
             navigateToFolderListScreen = navigateToFolderListScreen,
-            selectedFolder = folderName
+            selectedFolder = folderId,
+            navigateToFolderScreen = navigateToFolderScreen
         )
     }
 }

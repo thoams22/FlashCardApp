@@ -18,8 +18,8 @@ interface CardDatabaseDao {
     suspend fun deleteCard(card: Card)
 
     @Transaction
-    @Query("SELECT * from Card where folderName = :folderName AND (question LIKE :searchQuery OR reponse LIKE :searchQuery)")
-    fun searchDatabaseCard(searchQuery: String, folderName: String): Flow<List<Card>>
+    @Query("SELECT * from Card where folderId = :folderId AND (question LIKE :searchQuery OR reponse LIKE :searchQuery)")
+    fun searchDatabaseCard(searchQuery: String, folderId: Int): Flow<List<Card>>
 
     @Query("SELECT * from Card where cardId = :cardId ")
     fun getSelectedCard(cardId: Int): Flow<Card>
@@ -31,11 +31,11 @@ interface CardDatabaseDao {
     fun searchDatabaseFolder(searchQuery: String): Flow<List<Folder>>
 
     @Transaction
-    @Query("SELECT * from Folder where folderName = :folderName")
-    fun getFolderWithCards(folderName: String): Flow<List<FolderWithCards>>
+    @Query("SELECT * from Folder where folderId = :folderId")
+    fun getFolderWithCards(folderId: Int): Flow<List<FolderWithCards>>
 
-    @Query("SELECT * from Folder where folderName = :folderName ")
-    fun getSelectedFolder(folderName: String?): Flow<Folder>
+    @Query("SELECT * from Folder where folderId = :folderId ")
+    fun getSelectedFolder(folderId: Int?): Flow<Folder>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFolder(folder: Folder)

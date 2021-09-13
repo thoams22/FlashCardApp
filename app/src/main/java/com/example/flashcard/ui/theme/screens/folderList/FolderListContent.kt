@@ -9,8 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -19,10 +18,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.Action
+import com.example.flashcard.*
 import com.example.flashcard.R
-import com.example.flashcard.RequestState
-import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.Folder
 import com.example.flashcard.ui.theme.screens.list.EmptyContent
 @ExperimentalMaterialApi
@@ -31,8 +28,8 @@ fun FolderListContent(
     folders: RequestState<List<Folder>>,
     searchedFolders: RequestState<List<Folder>>,
     searchAppBarState: SearchAppBarState,
-    navigateToListScreen: (action: Action, String) -> Unit,
-    onSwipeToDelete: (Action)->Unit
+    navigateToListScreen: (action: Action, Int) -> Unit,
+    onSwipeToDelete: (Action, Folder)->Unit
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedFolders is RequestState.Success){
@@ -57,8 +54,8 @@ fun FolderListContent(
 @Composable
 fun HandleListContent(
     folders: List<Folder>,
-    onSwipeToDelete: (Action)->Unit,
-    navigateToListScreen: (action: Action, String) -> Unit
+    onSwipeToDelete: (Action, Folder)->Unit,
+    navigateToListScreen: (action: Action, Int) -> Unit
 ){
     if(folders.isEmpty()){
         EmptyContent()
@@ -75,21 +72,22 @@ fun HandleListContent(
 @Composable
 fun DisplayCard(
     folders: List<Folder>,
-    navigateToListScreen: (Action, String) -> Unit,
-    onSwipeToDelete: (Action) -> Unit
+    navigateToListScreen: (Action, Int) -> Unit,
+    onSwipeToDelete: (Action, Folder) -> Unit
 ){
     LazyColumn{
         items(
             items = folders,
             key = {
-                    folder-> folder.folderName
+                    folder-> folder.folderId
             }){folder->
             val dismissState = rememberDismissState()
 
             val dismissDirection = dismissState.dismissDirection
             val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
+
             if(isDismissed && dismissDirection == DismissDirection.EndToStart){
-                onSwipeToDelete(Action.DELETE_FOLDER)
+                onSwipeToDelete(Action.DELETE_FOLDER, folder)
             }
 
             val degrees by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0f else -45f)
@@ -125,7 +123,7 @@ fun RedBackground(degrees: Float){
 @Composable
 fun FolderItem(
     folder: Folder,
-    navigateToListScreen: (Action, String)->Unit
+    navigateToListScreen: (Action, Int)->Unit
 ){
     Surface(
         modifier = Modifier
@@ -133,7 +131,7 @@ fun FolderItem(
         shape = RectangleShape,
         elevation = 2.dp,
         onClick = {
-            navigateToListScreen(Action.NO_ACTION, folder.folderName)
+            navigateToListScreen(Action.NO_ACTION, folder.folderId)
         }
     ) {
         Column(modifier = Modifier

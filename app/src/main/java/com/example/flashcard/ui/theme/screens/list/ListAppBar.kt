@@ -6,9 +6,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,21 +19,29 @@ import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.TrailingIconState
 import com.example.flashcard.database.CardViewModel
-
-
+import com.example.flashcard.database.Folder
 
 @Composable
 fun ListAppBar(
     cardViewModel: CardViewModel,
     searchAppBarState: SearchAppBarState,
     searchTextState: String,
-    navigateToFolderListScreen: (Action) -> Unit
+    navigateToFolderListScreen: (Action) -> Unit,
+    selectedFolder: Folder?,
+    navigateToFolderScreen:(Int)-> Unit
 ) {
     when(searchAppBarState){
         SearchAppBarState.CLOSED -> {
-            DefaultListAppBar(onSearchClicked = {
-                cardViewModel.searchAppBarState.value = SearchAppBarState.OPENED
-            }, navigateToFolderListScreen = navigateToFolderListScreen)
+            if (selectedFolder?.folderName != null) {
+                DefaultListAppBar(
+                    onSearchClicked = {
+                        cardViewModel.searchAppBarState.value = SearchAppBarState.OPENED
+                    },
+                    navigateToFolderListScreen = navigateToFolderListScreen,
+                    selectedFolder = selectedFolder,
+                    navigateToFolderScreen = navigateToFolderScreen
+                )
+            }
         }
 
     else-> {
@@ -52,25 +58,49 @@ fun ListAppBar(
 }
 
 @Composable
-fun DefaultListAppBar(onSearchClicked: ()-> Unit, navigateToFolderListScreen: (Action) -> Unit){
+fun DefaultListAppBar(
+    onSearchClicked: () -> Unit,
+    navigateToFolderListScreen: (Action) -> Unit,
+    selectedFolder: Folder,
+    navigateToFolderScreen: (selectedFolder: Int) -> Unit
+){
     TopAppBar(navigationIcon = {
         BackAction(
             onBackClicked = navigateToFolderListScreen
         )
+
     },title = {
-        Text(text = stringResource(id = R.string.list_screen_title))
+        Text(text = stringResource(id = R.string.FolderName, selectedFolder.folderName))
     },
+
         actions={
-                ListAppBarActions(onSearchClicked = onSearchClicked)
-        },
+                ListAppBarActions(onSearchClicked = onSearchClicked, navigateToFolderScreen = navigateToFolderScreen,
+                    selectedFolder = selectedFolder.folderId)
+                        },
         backgroundColor = MaterialTheme.colors.primary)
 }
 
 @Composable
-fun ListAppBarActions(onSearchClicked: ()->Unit){
+fun ListAppBarActions(onSearchClicked: ()->Unit,navigateToFolderScreen: (selectedFolder: Int)->Unit, selectedFolder: Int){
+    ModifyAction(
+        onModifyClicked = navigateToFolderScreen,
+        selectedFolder = selectedFolder
+    )
     SearchAction(
         onSearchClicked = onSearchClicked
     )
+
+}
+
+@Composable
+fun ModifyAction(onModifyClicked: (selectedFolder: Int)->Unit, selectedFolder: Int){
+    IconButton(onClick = {onModifyClicked(selectedFolder)}
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ModeEdit,
+            contentDescription = stringResource(id = R.string.search_actions)
+        )
+    }
 }
 
 @Composable

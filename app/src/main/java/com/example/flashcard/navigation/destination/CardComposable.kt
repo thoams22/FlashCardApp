@@ -17,7 +17,7 @@ import com.example.flashcard.ui.theme.screens.card.CardScreen
 
 fun NavGraphBuilder.cardComposable(
     cardViewModel: CardViewModel,
-    navigateToListScreen: (Action, String) -> Unit){
+    navigateToListScreen: (Action, Int) -> Unit){
     composable(
         route = constants.CARD_SCREEN,
         arguments = listOf(navArgument(CARD_ARGUMENT_KEY){
@@ -31,12 +31,12 @@ fun NavGraphBuilder.cardComposable(
 
         LaunchedEffect(key1 = selectedCard){
             if (selectedCard != null || cardId == -1){
-            cardViewModel.updateSelectedCard(selectedCard=selectedCard, selectedFolder=selectedFolder!!.folderName)
+            cardViewModel.updateSelectedCard(selectedCard=selectedCard, selectedFolderId=selectedFolder!!.folderId)
         }}
 
     CardScreen(selectedCard = selectedCard,
         navigateToListScreen = navigateToListScreen,
-        cardViewModel = cardViewModel, folderName= selectedFolder!!.folderName)
+        cardViewModel = cardViewModel, folderName= selectedFolder!!.folderId)
     }
 }
 

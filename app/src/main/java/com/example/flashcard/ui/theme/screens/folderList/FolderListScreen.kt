@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 @ExperimentalMaterialApi
 @Composable
 fun FolderListScreen(
-    navigateToListScreen: (Action, String) -> Unit,
-    navigateToFolderScreen: (String)-> Unit,
+    navigateToListScreen: (Action, Int) -> Unit,
+    navigateToFolderScreen: (Int)-> Unit,
     cardViewModel: CardViewModel
 )
 {
@@ -32,13 +32,7 @@ fun FolderListScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    DisplaySnackBar(
-    scaffoldState = scaffoldState,
-    handleDatabaseActions = { cardViewModel.handleDatabaseAction(action = action) },
-    folderTitle = cardViewModel.folderName.value,
-    action = action,
-    onUndoClicked = { cardViewModel.action.value = it }
-    )
+    cardViewModel.handleDatabaseAction(action = action)
 
     Scaffold(
     scaffoldState = scaffoldState,
@@ -55,8 +49,10 @@ fun FolderListScreen(
         navigateToListScreen = navigateToListScreen,
         searchedFolders = searchedFolder,
         searchAppBarState = searchAppBarState,
-        onSwipeToDelete = { action ->
+        onSwipeToDelete = { action, folder ->
+
             cardViewModel.action.value = action
+
         }
     )
 },
@@ -67,10 +63,10 @@ fun FolderListScreen(
 
 @Composable
 fun FolderFab(
-    onFabClicked: (folderName: String) -> Unit
+    onFabClicked: (folderName: Int) -> Unit
 ){
     FloatingActionButton(onClick = {
-        onFabClicked("-1")
+        onFabClicked(-1)
     }) {
         Icon(
             imageVector = Icons.Filled.Add,
@@ -79,46 +75,3 @@ fun FolderFab(
     }
 }
 
-@Composable
-fun DisplaySnackBar(
-    scaffoldState: ScaffoldState,
-    handleDatabaseActions: ()->Unit,
-    onUndoClicked: (Action)->Unit,
-    folderTitle: String,
-    action: Action
-){
-    handleDatabaseActions()
-
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(key1 = action){
-        if (action != Action.NO_ACTION){
-            scope.launch {
-                val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
-                    message = "${action.name}: $folderTitle",
-                    actionLabel = setActionLabel(action = action)
-                )
-                undoDeletedFolder(action = action,
-                    snackBarResult = snackBarResult,
-                    onUndoClicked = onUndoClicked)
-            }
-        }
-    }
-}
-
-private fun setActionLabel(action: Action): String{
-    return if(action.name == "DELETE_FOLDER"){
-        "UNDO_FOLDER"
-    }else{
-        return "OK"
-    }
-}
-
-private fun undoDeletedFolder(
-    action: Action,
-    snackBarResult: SnackbarResult,
-    onUndoClicked: (Action)-> Unit
-){
-    if (snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE_FOLDER){
-        onUndoClicked(Action.UNDO_FOLDER)
-    }
-}

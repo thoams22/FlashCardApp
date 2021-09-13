@@ -7,8 +7,8 @@ import androidx.room.Relation
 data class FolderWithCards(
     @Embedded val folder: Folder,
     @Relation(
-        parentColumn = "folderName",
-        entityColumn = "folderName"
+        parentColumn = "folderId",
+        entityColumn = "folderId"
     )
     val cards: List<Card>
 )

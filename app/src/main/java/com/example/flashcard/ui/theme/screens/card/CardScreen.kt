@@ -15,8 +15,8 @@ import com.example.flashcard.database.CardViewModel
 @Composable
 fun CardScreen(
     selectedCard: Card?,
-    navigateToListScreen: (action: Action, String)->Unit,
-    cardViewModel: CardViewModel, folderName: String){
+    navigateToListScreen: (action: Action, Int)->Unit,
+    cardViewModel: CardViewModel, folderName: Int){
 
     val question: String by cardViewModel.question
     val reponse: String by cardViewModel.reponse
@@ -25,7 +25,7 @@ fun CardScreen(
     Scaffold(
     topBar = {
         CardAppBar(
-            folderName = folderName,
+            folderId = folderName,
             selectedCard = selectedCard,
             navigateToListScreen = { action, string ->
                 if(action == Action.NO_ACTION){

@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey
 @Entity
 data class Card (
     @PrimaryKey(autoGenerate = true)
-    var cardId: Int=0,
+    val cardId: Int=0,
     @ColumnInfo(name = "question")
     val question: String,
     @ColumnInfo(name="reponse")
     val reponse: String,
-    val folderName: String=""
+    val folderId: Int
 )

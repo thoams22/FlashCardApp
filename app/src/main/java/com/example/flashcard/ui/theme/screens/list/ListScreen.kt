@@ -1,5 +1,6 @@
 package com.example.flashcard.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,16 +20,19 @@ fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action)-> Unit,
-    selectedFolder: String?
+    selectedFolder: Int?,
+    navigateToFolderScreen: (Int)->Unit
 )
 {    LaunchedEffect(key1 = true){
     if (selectedFolder != null) {
         cardViewModel.getFolderWithCards(selectedFolder)
+        cardViewModel.getSelectedFolder(selectedFolder)
     }
     }
 
     val action by cardViewModel.action
 
+    val selceF by cardViewModel.selectedFolder.collectAsState()
     val folderWithCardsList by cardViewModel.getFolderWithCards.collectAsState()
     val searchedCard by cardViewModel.searchCards.collectAsState()
     val searchAppBarState: SearchAppBarState by cardViewModel.searchAppBarState
@@ -50,7 +54,9 @@ Scaffold(
             cardViewModel = cardViewModel,
             searchAppBarState = searchAppBarState,
             searchTextState = searchTextState,
-            navigateToFolderListScreen= navigateToFolderListScreen
+            navigateToFolderListScreen= navigateToFolderListScreen,
+            selectedFolder = selceF,
+            navigateToFolderScreen = navigateToFolderScreen
         )
     },
     content = {
@@ -59,11 +65,12 @@ Scaffold(
         navigateToTaskScreen = navigateToTaskScreen,
         searchedCards = searchedCard,
         searchAppBarState = searchAppBarState,
+            cardViewModel = cardViewModel,
         onSwipeToDelete = {
             action, card ->
             cardViewModel.action.value = action
             if (selectedFolder != null) {
-                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolder=selectedFolder)
+                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder)
             }
         }
     )},
@@ -97,25 +104,17 @@ fun DisplaySnackBar(
 
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = action){
-        if (action != Action.NO_ACTION){
+        if (action == Action.DELETE_CARD){
             scope.launch {
                 val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
                     message = "${action.name}: $cardTitle",
-                    actionLabel = setActionLabel(action = action)
+                    actionLabel = "UNDO_CARD"
                 )
                 undoDeletedCard(action = action,
                 snackBarResult = snackBarResult,
                 onUndoClicked = onUndoClicked)
             }
         }
-    }
-}
-
-private fun setActionLabel(action: Action): String{
-    return if(action.name == "DELETE_CARD"){
-        "UNDO_CARD"
-    }else{
-        return "OK"
     }
 }
 

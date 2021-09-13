@@ -17,27 +17,31 @@ import com.example.flashcard.ui.theme.screens.folder.FolderScreen
 
 fun NavGraphBuilder.folderComposable(
     cardViewModel: CardViewModel,
-    navigateToFolderListScreen: (Action) -> Unit){
+    navigateToFolderListScreen: (Action) -> Unit,
+    navigateToListScreen: (Action, Int)-> Unit){
     composable(
         route = constants.FOLDER_SCREEN,
         arguments = listOf(navArgument(FOLDER_ARGUMENT_KEY){
-            type = NavType.StringType
+            type = NavType.IntType
         })
     ){ navBackStackEntry ->
-        val folderName = navBackStackEntry.arguments?.getString(FOLDER_ARGUMENT_KEY)
+        val folderId = navBackStackEntry.arguments?.getInt(FOLDER_ARGUMENT_KEY)
 
-        if (folderName != null) {
-            cardViewModel.getSelectedFolder(folderName = folderName)
+        if (folderId != null) {
+            cardViewModel.getSelectedFolder(folderId = folderId)
         }
         val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
         LaunchedEffect(key1 = selectedFolder){
-            if (selectedFolder != null || folderName == "-1"){
+            if (selectedFolder != null || folderId == -1){
                 cardViewModel.updateSelectedFolder(selectedFolder=selectedFolder)
             }}
 
-        FolderScreen(selectedFolder = selectedFolder,
+        FolderScreen(
+            selectedFolder = selectedFolder,
             navigateToFolderListScreen = navigateToFolderListScreen,
-            cardViewModel = cardViewModel)
+            cardViewModel = cardViewModel,
+            navigateToListScreen = navigateToListScreen
+        )
     }
 }

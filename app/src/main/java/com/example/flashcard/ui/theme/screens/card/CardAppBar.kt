@@ -22,24 +22,24 @@ import com.example.flashcard.database.Card
 @Composable
 fun CardAppBar(
     selectedCard: Card?,
-    folderName: String,
-    navigateToListScreen: (Action, String)->Unit){
+    folderId: Int,
+    navigateToListScreen: (Action, Int)->Unit){
     if(selectedCard == null){
-        NewCardAppBar(navigateToListScreen = navigateToListScreen,folderName=folderName)
+        NewCardAppBar(navigateToListScreen = navigateToListScreen,folderId=folderId)
     }else{
         ExistingCardAppBar(selectedCard = selectedCard,navigateToListScreen = navigateToListScreen)
     }
 }
 
 @Composable
-fun NewCardAppBar(navigateToListScreen: (Action,String)->Unit, folderName: String){
+fun NewCardAppBar(navigateToListScreen: (Action,Int)->Unit, folderId: Int){
     TopAppBar(
-        navigationIcon = { BackAction(onBackClicked = navigateToListScreen, folderName=folderName)},
+        navigationIcon = { BackAction(onBackClicked = navigateToListScreen, folderId=folderId)},
         title = {
         Text(text = stringResource(id = R.string.add_card))
     },
         actions = {
-            AddAction(onBackClicked = navigateToListScreen, folderName=folderName)
+            AddAction(onBackClicked = navigateToListScreen, folderId=folderId)
         }
     )
 }
@@ -47,9 +47,9 @@ fun NewCardAppBar(navigateToListScreen: (Action,String)->Unit, folderName: Strin
 @Composable
 fun ExistingCardAppBar(
     selectedCard: Card,
-    navigateToListScreen: (Action,String)->Unit){
+    navigateToListScreen: (Action,Int)->Unit){
     TopAppBar(
-        navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen, folderName=selectedCard.folderName) },
+        navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen, folderId=selectedCard.folderId) },
         title = {
             Text(
                 text = selectedCard.question,
@@ -69,7 +69,7 @@ fun ExistingCardAppBar(
 @Composable
 fun ExistingCardAppBarAction(
     selectedCard: Card,
-    navigateToListScreen: (Action,String)->Unit
+    navigateToListScreen: (Action,Int)->Unit
 ){
     var openDialog by remember {
         mutableStateOf(false)
@@ -82,29 +82,28 @@ fun ExistingCardAppBarAction(
         ),
         openDialog = openDialog,
         closeDialog = { openDialog = false },
-        onYesClicked = { navigateToListScreen(Action.DELETE_CARD, selectedCard.folderName)}
+        onYesClicked = { navigateToListScreen(Action.DELETE_CARD, selectedCard.folderId)}
     )
 
     DeleteAction(onDeleteClicked = {openDialog = true})
-    UpdateAction(onUpdateClicked = navigateToListScreen, folderName= selectedCard.folderName)
+    UpdateAction(onUpdateClicked = navigateToListScreen, folderId= selectedCard.folderId)
 }
 
 @Composable
-fun AddAction(onBackClicked: (Action,String)-> Unit, folderName: String){
-    IconButton(onClick = {onBackClicked(Action.ADD_CARD,folderName)}) {
+fun AddAction(onBackClicked: (Action,Int)-> Unit, folderId: Int){
+    IconButton(onClick = {onBackClicked(Action.ADD_CARD,folderId)}) {
         Icon(imageVector = Icons.Filled.Check, contentDescription = stringResource(id = R.string.add_card))
     }
 }
 @Composable
-fun BackAction(onBackClicked: (Action,String)-> Unit, folderName: String){
-    IconButton(onClick = {onBackClicked(Action.NO_ACTION, folderName)}) {
+fun BackAction(onBackClicked: (Action,Int)-> Unit, folderId: Int){
+    IconButton(onClick = {onBackClicked(Action.NO_ACTION, folderId)}) {
         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
     }
 }
-
 @Composable
-fun CloseAction(onCloseClicked: (Action,String)-> Unit, folderName: String){
-    IconButton(onClick = {onCloseClicked(Action.NO_ACTION, folderName)}) {
+fun CloseAction(onCloseClicked: (Action,Int)-> Unit, folderId: Int){
+    IconButton(onClick = {onCloseClicked(Action.NO_ACTION, folderId)}) {
         Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(id = R.string.close_icons))
     }
 }
@@ -115,8 +114,8 @@ fun DeleteAction(onDeleteClicked: ()->Unit){
     }
 }
 @Composable
-fun UpdateAction(onUpdateClicked: (Action,String)-> Unit, folderName: String){
-    IconButton(onClick = {onUpdateClicked(Action.UPDATE_CARD,folderName)}) {
+fun UpdateAction(onUpdateClicked: (Action,Int)-> Unit, folderId: Int){
+    IconButton(onClick = {onUpdateClicked(Action.UPDATE_CARD,folderId)}) {
         Icon(imageVector = Icons.Filled.Check, contentDescription = stringResource(id = R.string.check_icon))
     }
 }

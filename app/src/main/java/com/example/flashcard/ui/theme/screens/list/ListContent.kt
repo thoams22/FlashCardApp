@@ -10,6 +10,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +27,7 @@ import com.example.flashcard.R
 import com.example.flashcard.RequestState
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.Card
+import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.FolderWithCards
 
 
@@ -35,7 +38,8 @@ fun ListContent(
     searchedCards: RequestState<List<Card>>,
     searchAppBarState: SearchAppBarState,
     navigateToTaskScreen: (cardId: Int) -> Unit,
-    onSwipeToDelete: (Action, Card)->Unit
+    onSwipeToDelete: (Action, Card)->Unit,
+    cardViewModel: CardViewModel
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedCards is RequestState.Success){
@@ -43,9 +47,12 @@ fun ListContent(
             HandleListContentSearched(cards = searchedCards.data, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
         }
     }else{
-        if (cards is RequestState.Success){
+        if (cards is RequestState.Success && cards.data.isNotEmpty()){
             HandleListContent(cards = cards.data, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
-        }
+        }else{
+                EmptyContent()
+            }
+
     }
 }
 

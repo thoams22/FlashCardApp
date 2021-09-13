@@ -17,8 +17,8 @@ import com.example.flashcard.ui.theme.screens.folderList.FolderListScreen
 
 @ExperimentalMaterialApi
 fun NavGraphBuilder.folderlistComposable(
-    navigateToListScreen: (action: Action,String) -> Unit,
-    navigateToFolderScreen: (String) -> Unit,
+    navigateToListScreen: (action: Action,Int) -> Unit,
+    navigateToFolderScreen: (Int) -> Unit,
     cardViewModel: CardViewModel
 ){
     composable(

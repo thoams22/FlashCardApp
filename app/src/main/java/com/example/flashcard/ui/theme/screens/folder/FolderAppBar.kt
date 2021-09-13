@@ -22,11 +22,13 @@ import com.example.flashcard.database.Folder
 @Composable
 fun FolderAppBar(
     selectedFolder: Folder?,
-    navigateToFolderListScreen: (Action)->Unit){
+    navigateToFolderListScreen: (Action) -> Unit,
+    navigateToListScreen: (Action, Int) -> Unit
+){
     if(selectedFolder == null){
         NewFolderAppBar(navigateToFolderListScreen = navigateToFolderListScreen)
     }else{
-        ExistingFolderAppBar(navigateToFolderListScreen = navigateToFolderListScreen, selectedFolder = selectedFolder)
+        ExistingFolderAppBar(selectedFolder = selectedFolder, navigateToListScreen=navigateToListScreen,navigateToFolderListScreen=navigateToFolderListScreen)
     }
 }
 
@@ -46,9 +48,10 @@ fun NewFolderAppBar(navigateToFolderListScreen: (Action)->Unit){
 @Composable
 fun ExistingFolderAppBar(
     selectedFolder: Folder,
+    navigateToListScreen: (Action, Int)->Unit,
     navigateToFolderListScreen: (Action)->Unit){
     TopAppBar(
-        navigationIcon = { CloseAction(onCloseClicked = navigateToFolderListScreen) },
+        navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen, folderId = selectedFolder.folderId) },
         title = {
             Text(
                 text = "Rename : ${selectedFolder.folderName}",
@@ -57,18 +60,17 @@ fun ExistingFolderAppBar(
         },
         actions = {
             ExistingCardAppBarAction(
-                navigateToListScreen = navigateToFolderListScreen
+                navigateToFolderListScreen = navigateToFolderListScreen
             )
-
         }
     )
 }
 
 @Composable
 fun ExistingCardAppBarAction(
-    navigateToListScreen: (Action)->Unit
+    navigateToFolderListScreen: (Action) -> kotlin.Unit,
 ){
-    UpdateAction(onUpdateClicked = navigateToListScreen)
+    UpdateAction(onUpdateClicked = navigateToFolderListScreen)
 }
 
 @Composable
@@ -84,15 +86,9 @@ fun BackAction(onBackClicked: (Action)-> Unit){
     }
 }
 @Composable
-fun CloseAction(onCloseClicked: (Action)-> Unit){
-    IconButton(onClick = {onCloseClicked(Action.NO_ACTION)}) {
+fun CloseAction(onCloseClicked: (Action, Int)-> Unit, folderId: Int){
+    IconButton(onClick = {onCloseClicked(Action.NO_ACTION, folderId)}) {
         Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(id = R.string.close_icons))
-    }
-}
-@Composable
-fun DeleteAction(onDeleteClicked: ()->Unit){
-    IconButton(onClick = {onDeleteClicked()}) {
-        Icon(imageVector = Icons.Filled.Delete, contentDescription = stringResource(id = R.string.delete_icon))
     }
 }
 @Composable

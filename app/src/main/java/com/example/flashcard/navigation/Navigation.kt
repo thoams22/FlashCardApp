@@ -24,9 +24,25 @@ fun SetupNavigation(
     NavHost(navController = navController,
         startDestination =  FOLDER_LIST_SCREEN
     ){
-        listComposable(navigateToTaskScreen = screen.task, cardViewModel = cardviewModel, navigateToFolderListScreen = screen.folderList)
-        cardComposable(navigateToListScreen = screen.list, cardViewModel = cardviewModel)
-        folderlistComposable(navigateToListScreen = screen.list, cardViewModel = cardviewModel, navigateToFolderScreen = screen.folder)
-        folderComposable(navigateToFolderListScreen= screen.folderList, cardViewModel=cardviewModel)
+        listComposable(
+            navigateToTaskScreen = screen.task,
+            cardViewModel = cardviewModel,
+            navigateToFolderListScreen = screen.folderList,
+            navigateToFolderScreen = screen.folder
+        )
+        cardComposable(
+            navigateToListScreen = screen.list,
+            cardViewModel = cardviewModel
+        )
+        folderlistComposable(
+            navigateToListScreen = screen.list,
+            cardViewModel = cardviewModel,
+            navigateToFolderScreen = screen.folder
+        )
+        folderComposable(
+            navigateToFolderListScreen = screen.folderList,
+            cardViewModel = cardviewModel,
+            navigateToListScreen = screen.list
+        )
     }
 }

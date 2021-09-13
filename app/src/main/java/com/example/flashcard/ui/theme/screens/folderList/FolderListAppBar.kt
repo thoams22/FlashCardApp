@@ -42,7 +42,6 @@ fun FolderListAppBar(
             )
         }
     }
-
 }
 
 @Composable

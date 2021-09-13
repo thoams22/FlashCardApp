@@ -28,16 +28,17 @@ class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
 
     val readAllFolder: Flow<List<Folder>> = cardDao.readAllFolder()
 
-    fun searchDatabaseCard(searchQuery: String, folderName: String): Flow<List<Card>>{
-        return cardDao.searchDatabaseCard(searchQuery = searchQuery, folderName = folderName)
+    fun searchDatabaseCard(searchQuery: String, folderId: Int): Flow<List<Card>>{
+        return cardDao.searchDatabaseCard(searchQuery = searchQuery, folderId = folderId)
     }
+
 
     fun searchDatabaseFolder(searchQuery: String): Flow<List<Folder>>{
         return cardDao.searchDatabaseFolder(searchQuery = searchQuery)
     }
 
-    fun getSelectedFolder(folderName: String?): Flow<Folder>{
-        return cardDao.getSelectedFolder(folderName)
+    fun getSelectedFolder(folderId: Int?): Flow<Folder>{
+        return cardDao.getSelectedFolder(folderId)
     }
 
     suspend fun insertFolder(folder: Folder){
@@ -52,7 +53,7 @@ class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
         cardDao.updateFolder(folder = folder)
     }
 
-    fun getFolderWithCards(folderName: String): Flow<List<FolderWithCards>>{
-        return cardDao.getFolderWithCards(folderName)}
+    fun getFolderWithCards(folderId: Int): Flow<List<FolderWithCards>>{
+        return cardDao.getFolderWithCards(folderId)}
 
 }
