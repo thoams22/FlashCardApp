@@ -26,4 +26,8 @@ class Screens(navController: NavController) {
     val folder:(Int)-> Unit = {folderName ->
         navController.navigate("folder/$folderName")
     }
+
+    val learning:(Int)->Unit = {folderId->
+        navController.navigate("learning/$folderId")
+    }
 }

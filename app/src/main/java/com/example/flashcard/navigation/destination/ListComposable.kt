@@ -1,30 +1,26 @@
 package com.example.flashcard.navigation.destination
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import com.example.flashcard.Action
-import com.example.flashcard.constants
 import com.example.flashcard.constants.LIST_ACTION_KEY
 import com.example.flashcard.constants.LIST_ARGUMENT_KEY
 import com.example.flashcard.constants.LIST_SCREEN
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.toAction
-import com.example.flashcard.ui.theme.screens.ListScreen
+import com.example.flashcard.screens.ListScreen
 
 @ExperimentalMaterialApi
 fun NavGraphBuilder.listComposable(
     navigateToTaskScreen: (CardId: Int) -> Unit,
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (action: Action) -> Unit,
-    navigateToFolderScreen: (Int)-> Unit
+    navigateToFolderScreen: (Int)-> Unit,
+    navigateToLearningScreen: (CardId: Int) -> Unit
 ){
     composable(
         route = LIST_SCREEN,
@@ -48,7 +44,8 @@ fun NavGraphBuilder.listComposable(
             cardViewModel = cardViewModel,
             navigateToFolderListScreen = navigateToFolderListScreen,
             selectedFolder = folderId,
-            navigateToFolderScreen = navigateToFolderScreen
+            navigateToFolderScreen = navigateToFolderScreen,
+            navigateToLearningScreen= navigateToLearningScreen
         )
     }
 }

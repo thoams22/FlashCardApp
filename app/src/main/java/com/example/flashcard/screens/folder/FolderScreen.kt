@@ -1,13 +1,13 @@
-package com.example.flashcard.ui.theme.screens.folder
+package com.example.flashcard.screens.folder
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action
+import com.example.flashcard.KeyboardState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 
@@ -23,6 +23,7 @@ fun FolderScreen(
         cardViewModel.ancientFolderId.value = selectedFolder.folderId
     }
     val context = LocalContext.current
+    cardViewModel.KeyboardState.value = KeyboardState.DEFAULT
 
     Scaffold(
         topBar = {
@@ -52,7 +53,8 @@ fun FolderScreen(
         content = {
                 FolderContent(
                     folderName = folderName,
-                    onFolderNameChange = {cardViewModel.folderName.value = it}
+                    onFolderNameChange = {cardViewModel.folderName.value = it},
+                    cardViewModel =cardViewModel
                 )
         }
     )

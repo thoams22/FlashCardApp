@@ -1,15 +1,20 @@
-package com.example.flashcard.ui.theme.screens.folderList
+package com.example.flashcard.screens.folderList
 
+import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.flashcard.Action
-import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
-import kotlinx.coroutines.launch
+
+
 
 @ExperimentalMaterialApi
 @Composable
@@ -50,7 +55,7 @@ fun FolderListScreen(
         searchedFolders = searchedFolder,
         searchAppBarState = searchAppBarState,
         onSwipeToDelete = { action, folder ->
-
+            cardViewModel.getSelectedFolder(folder.folderId)
             cardViewModel.action.value = action
 
         }
@@ -70,7 +75,7 @@ fun FolderFab(
     }) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = stringResource(id = R.string.add_button)
+            contentDescription = stringResource(id = com.example.flashcard.R.string.add_button)
         )
     }
 }

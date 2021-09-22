@@ -1,4 +1,4 @@
-package com.example.flashcard.ui.theme.screens.folder
+package com.example.flashcard.screens.card
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,24 +10,31 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flashcard.R
-import com.example.flashcard.ui.theme.screens.card.CardContent
 
 @Composable
-fun FolderContent(
-    folderName: String,
-    onFolderNameChange: (String)->Unit
+fun CardContent(
+    question: String,
+    onQuestionChange: (String)->Unit,
+    reponse: String,
+    onReponseChange: (String)->Unit
 ){
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = folderName,
-            onValueChange = { onFolderNameChange(it) },
-            label = { Text(text = stringResource(id = R.string.folderName)) },
+            value = question,
+            onValueChange = { onQuestionChange(it) },
+            label = { Text(text = stringResource(id = R.string.question))},
+            textStyle = MaterialTheme.typography.body1
+        )
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = reponse,
+            onValueChange = { onReponseChange(it) },
+            label = { Text( text = stringResource(id = R.string.reponse)) },
             textStyle = MaterialTheme.typography.body1
         )
     }

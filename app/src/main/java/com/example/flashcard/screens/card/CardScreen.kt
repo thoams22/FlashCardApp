@@ -1,11 +1,9 @@
-package com.example.flashcard.ui.theme.screens.card
+package com.example.flashcard.screens.card
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action

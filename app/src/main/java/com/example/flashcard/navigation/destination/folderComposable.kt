@@ -1,19 +1,17 @@
 package com.example.flashcard.navigation.destination
 
-import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import com.example.flashcard.Action
 import com.example.flashcard.constants
 import com.example.flashcard.constants.FOLDER_ARGUMENT_KEY
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.ui.theme.screens.card.CardScreen
-import com.example.flashcard.ui.theme.screens.folder.FolderScreen
+import com.example.flashcard.screens.folder.FolderScreen
 
 fun NavGraphBuilder.folderComposable(
     cardViewModel: CardViewModel,

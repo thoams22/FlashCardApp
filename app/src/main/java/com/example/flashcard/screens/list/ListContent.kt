@@ -1,6 +1,5 @@
-package com.example.flashcard.ui.theme.screens.folderList
+package com.example.flashcard.screens.list
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,8 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -18,90 +19,106 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.*
+import com.example.flashcard.Action
 import com.example.flashcard.R
+import com.example.flashcard.RequestState
+import com.example.flashcard.SearchAppBarState
+import com.example.flashcard.database.Card
+import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
-import com.example.flashcard.ui.theme.screens.list.EmptyContent
+import com.example.flashcard.database.FolderWithCards
+
+
 @ExperimentalMaterialApi
 @Composable
-fun FolderListContent(
-    folders: RequestState<List<Folder>>,
-    searchedFolders: RequestState<List<Folder>>,
+fun ListContent(
+    cards: RequestState<List<FolderWithCards>>,
+    searchedCards: RequestState<List<Card>>,
     searchAppBarState: SearchAppBarState,
-    navigateToListScreen: (action: Action, Int) -> Unit,
-    onSwipeToDelete: (Action, Folder)->Unit
+    navigateToTaskScreen: (cardId: Int) -> Unit,
+    onSwipeToDelete: (Action, Card)->Unit,
+    cardViewModel: CardViewModel
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
-        if (searchedFolders is RequestState.Success){
-            HandleListContent(
-                folders = searchedFolders.data,
-                navigateToListScreen = navigateToListScreen,
-                onSwipeToDelete = onSwipeToDelete
-            )
+        if (searchedCards is RequestState.Success){
+
+            HandleListContentSearched(cards = searchedCards.data, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
         }
     }else{
-        if (folders is RequestState.Success){
+        if (cards is RequestState.Success && cards.data.isNotEmpty()){
             HandleListContent(
-                folders = folders.data,
-                navigateToListScreen = navigateToListScreen,
+                cards = cards.data,
+                navigateToTaskScreen = navigateToTaskScreen,
                 onSwipeToDelete = onSwipeToDelete
             )
-        }
+        }else{
+                EmptyContent()
+            }
+
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
 fun HandleListContent(
-    folders: List<Folder>,
-    onSwipeToDelete: (Action, Folder)->Unit,
-    navigateToListScreen: (action: Action, Int) -> Unit
+    cards: List<FolderWithCards>,
+    onSwipeToDelete: (Action, Card)->Unit,
+    navigateToTaskScreen: (cardId: Int) -> Unit
+
 ){
-    if(folders.isEmpty()){
+    if(cards.first().cards.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(
-            folders = folders,
-            navigateToListScreen = navigateToListScreen,
-            onSwipeToDelete = onSwipeToDelete
-        )
+        DisplayCard(cards = cards.first().cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
+    }
+}
+
+
+@ExperimentalMaterialApi
+@Composable
+fun HandleListContentSearched(
+    cards: List<Card>,
+    onSwipeToDelete: (Action, Card)->Unit,
+    navigateToTaskScreen: (cardId: Int) -> Unit
+
+){
+
+    if(cards.isEmpty()){
+        EmptyContent()
+    }else{
+        DisplayCard(cards = cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun DisplayCard(
-    folders: List<Folder>,
-    navigateToListScreen: (Action, Int) -> Unit,
-    onSwipeToDelete: (Action, Folder) -> Unit
-){
+fun DisplayCard(cards: List<Card>, navigateToTaskScreen: (cardId: Int) -> Unit, onSwipeToDelete: (Action, Card)->Unit){
+
     LazyColumn{
         items(
-            items = folders,
+            items = cards,
             key = {
-                    folder-> folder.folderId
-            }){folder->
+                    card-> card.cardId
+            }){card ->
             val dismissState = rememberDismissState()
 
             val dismissDirection = dismissState.dismissDirection
             val isDismissed = dismissState.isDismissed(DismissDirection.EndToStart)
-
             if(isDismissed && dismissDirection == DismissDirection.EndToStart){
-                onSwipeToDelete(Action.DELETE_FOLDER, folder)
+                onSwipeToDelete(Action.DELETE_CARD,card)
             }
-
             val degrees by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0f else -45f)
+
             SwipeToDismiss(
                 state = dismissState,
                 directions = setOf(DismissDirection.EndToStart),
                 dismissThresholds = { FractionalThreshold(fraction = 0.3f) },
                 background = { RedBackground(degrees = degrees)},
-                dismissContent = {FolderItem(folder = folder, navigateToListScreen = navigateToListScreen)}
+                dismissContent = {CardItem(card = card, navigateToTaskScreen = navigateToTaskScreen)}
             )
         }
     }
 }
-
 
 @Composable
 fun RedBackground(degrees: Float){
@@ -121,9 +138,9 @@ fun RedBackground(degrees: Float){
 
 @ExperimentalMaterialApi
 @Composable
-fun FolderItem(
-    folder: Folder,
-    navigateToListScreen: (Action, Int)->Unit
+fun CardItem(
+    card: Card,
+    navigateToTaskScreen: (cardId: Int)->Unit
 ){
     Surface(
         modifier = Modifier
@@ -131,16 +148,21 @@ fun FolderItem(
         shape = RectangleShape,
         elevation = 2.dp,
         onClick = {
-            navigateToListScreen(Action.NO_ACTION, folder.folderId)
+            navigateToTaskScreen(card.cardId)
         }
     ) {
         Column(modifier = Modifier
             .padding(12.dp)
             .fillMaxWidth()) {
             Text(modifier = Modifier.fillMaxWidth(),
-                text = folder.folderName,
+                text = card.question,
                 style = MaterialTheme.typography.h5,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
+            Text(modifier = Modifier.fillMaxWidth(),
+                text = card.reponse,
+                style= MaterialTheme.typography.subtitle1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis)
         }
     }

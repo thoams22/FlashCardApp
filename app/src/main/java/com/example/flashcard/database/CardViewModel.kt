@@ -3,11 +3,8 @@ package com.example.flashcard.database
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-
 import androidx.lifecycle.viewModelScope
-import com.example.flashcard.Action
-import com.example.flashcard.RequestState
-import com.example.flashcard.SearchAppBarState
+import com.example.flashcard.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.android.awaitFrame
@@ -32,6 +29,10 @@ class CardViewModel @Inject constructor(
 
     val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
     val searchTextState: MutableState<String> = mutableStateOf("")
+    val preReponse: MutableState<String> = mutableStateOf("")
+    val ContentState: MutableState<ContentState> = mutableStateOf(com.example.flashcard.ContentState.CLOSED)
+    val KeyboardState: MutableState<KeyboardState> = mutableStateOf(com.example.flashcard.KeyboardState.DEFAULT)
+    var cardList: MutableList<Card> = mutableListOf(Card(-1, "", "", -1))
 
 
     private val  _searchCards = MutableStateFlow<RequestState<List<Card>>>(RequestState.Idle)

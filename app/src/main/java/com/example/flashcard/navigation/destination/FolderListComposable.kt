@@ -1,18 +1,17 @@
 package com.example.flashcard.navigation.destination
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import com.example.flashcard.Action
 import com.example.flashcard.constants.FOLDER_LIST_ARGUMENT_KEY
 import com.example.flashcard.constants.FOLDER_LIST_SCREEN
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.toAction
-import com.example.flashcard.ui.theme.screens.folderList.FolderListScreen
+import com.example.flashcard.screens.folderList.FolderListScreen
 
 
 @ExperimentalMaterialApi

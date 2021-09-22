@@ -1,4 +1,4 @@
-package com.example.flashcard.ui.theme.screens.folder
+package com.example.flashcard.screens.folder
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -8,14 +8,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.flashcard.Action
-import com.example.flashcard.DisplayAlertDialog
 import com.example.flashcard.R
-import com.example.flashcard.database.Card
 import com.example.flashcard.database.Folder
 
 

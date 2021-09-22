@@ -1,4 +1,4 @@
-package com.example.flashcard.ui.theme.screens.list
+package com.example.flashcard.screens.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.flashcard.Action
 import com.example.flashcard.R
@@ -28,7 +27,8 @@ fun ListAppBar(
     searchTextState: String,
     navigateToFolderListScreen: (Action) -> Unit,
     selectedFolder: Folder?,
-    navigateToFolderScreen:(Int)-> Unit
+    navigateToFolderScreen:(Int)-> Unit,
+    navigateToTaskScreen: (Int)->Unit
 ) {
     when(searchAppBarState){
         SearchAppBarState.CLOSED -> {
@@ -39,7 +39,8 @@ fun ListAppBar(
                     },
                     navigateToFolderListScreen = navigateToFolderListScreen,
                     selectedFolder = selectedFolder,
-                    navigateToFolderScreen = navigateToFolderScreen
+                    navigateToFolderScreen = navigateToFolderScreen,
+                    navigateToTaskScreen = navigateToTaskScreen
                 )
             }
         }
@@ -62,7 +63,8 @@ fun DefaultListAppBar(
     onSearchClicked: () -> Unit,
     navigateToFolderListScreen: (Action) -> Unit,
     selectedFolder: Folder,
-    navigateToFolderScreen: (selectedFolder: Int) -> Unit
+    navigateToFolderScreen: (selectedFolder: Int) -> Unit,
+    navigateToTaskScreen: (Int) -> Unit
 ){
     TopAppBar(navigationIcon = {
         BackAction(
@@ -75,13 +77,18 @@ fun DefaultListAppBar(
 
         actions={
                 ListAppBarActions(onSearchClicked = onSearchClicked, navigateToFolderScreen = navigateToFolderScreen,
-                    selectedFolder = selectedFolder.folderId)
+                    selectedFolder = selectedFolder.folderId, navigateToTaskScreen=navigateToTaskScreen)
                         },
         backgroundColor = MaterialTheme.colors.primary)
 }
 
 @Composable
-fun ListAppBarActions(onSearchClicked: ()->Unit,navigateToFolderScreen: (selectedFolder: Int)->Unit, selectedFolder: Int){
+fun ListAppBarActions(
+    onSearchClicked: () -> Unit,
+    navigateToFolderScreen: (selectedFolder: Int) -> Unit,
+    selectedFolder: Int,
+    navigateToTaskScreen: (Int) -> Unit
+){
     ModifyAction(
         onModifyClicked = navigateToFolderScreen,
         selectedFolder = selectedFolder
@@ -89,6 +96,7 @@ fun ListAppBarActions(onSearchClicked: ()->Unit,navigateToFolderScreen: (selecte
     SearchAction(
         onSearchClicked = onSearchClicked
     )
+    AddAction(navigateToTaskScreen = navigateToTaskScreen)
 
 }
 
@@ -101,6 +109,15 @@ fun ModifyAction(onModifyClicked: (selectedFolder: Int)->Unit, selectedFolder: I
             contentDescription = stringResource(id = R.string.search_actions)
         )
     }
+}
+@Composable
+fun AddAction(navigateToTaskScreen: (Int)->Unit){
+    IconButton(onClick = { navigateToTaskScreen(-1)})
+        {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = stringResource(id = R.string.add_button))
+        }
 }
 
 @Composable

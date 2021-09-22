@@ -6,12 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.flashcard.constants.FOLDER_LIST_SCREEN
+import com.example.flashcard.constants.LEARNING_SCREEN
 import com.example.flashcard.constants.LIST_SCREEN
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.navigation.destination.folderlistComposable
-import com.example.flashcard.navigation.destination.listComposable
-import com.example.flashcard.navigation.destination.cardComposable
-import com.example.flashcard.navigation.destination.folderComposable
+import com.example.flashcard.navigation.destination.*
 
 @ExperimentalMaterialApi
 @Composable
@@ -28,7 +26,8 @@ fun SetupNavigation(
             navigateToTaskScreen = screen.task,
             cardViewModel = cardviewModel,
             navigateToFolderListScreen = screen.folderList,
-            navigateToFolderScreen = screen.folder
+            navigateToFolderScreen = screen.folder,
+            navigateToLearningScreen = screen.learning
         )
         cardComposable(
             navigateToListScreen = screen.list,
@@ -43,6 +42,11 @@ fun SetupNavigation(
             navigateToFolderListScreen = screen.folderList,
             cardViewModel = cardviewModel,
             navigateToListScreen = screen.list
+        )
+        learningComposable(
+            navigateToListScreen = screen.list,
+            cardViewModel = cardviewModel,
+            navigateToLearningScreen = screen.learning
         )
     }
 }

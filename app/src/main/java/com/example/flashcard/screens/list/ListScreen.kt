@@ -1,17 +1,18 @@
-package com.example.flashcard.ui.theme.screens
+package com.example.flashcard.screens
 
-import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import com.example.flashcard.Action
 import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.ui.theme.screens.list.ListAppBar
-import com.example.flashcard.ui.theme.screens.list.ListContent
+import com.example.flashcard.screens.list.ListAppBar
+import com.example.flashcard.screens.list.ListContent
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -21,7 +22,8 @@ fun ListScreen(
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action)-> Unit,
     selectedFolder: Int?,
-    navigateToFolderScreen: (Int)->Unit
+    navigateToFolderScreen: (Int)->Unit,
+    navigateToLearningScreen: (Int) -> Unit
 )
 {    LaunchedEffect(key1 = true){
     if (selectedFolder != null) {
@@ -56,7 +58,8 @@ Scaffold(
             searchTextState = searchTextState,
             navigateToFolderListScreen= navigateToFolderListScreen,
             selectedFolder = selceF,
-            navigateToFolderScreen = navigateToFolderScreen
+            navigateToFolderScreen = navigateToFolderScreen,
+            navigateToTaskScreen = navigateToTaskScreen
         )
     },
     content = {
@@ -75,20 +78,24 @@ Scaffold(
         }
     )},
     floatingActionButton = {
-        ListFab(onFabClicked = navigateToTaskScreen)
-    })
+        ListFab(onFabClicked = navigateToLearningScreen, selectedFolder = selectedFolder)
+    },
+    )
 }
 
 @Composable
 fun ListFab(
-    onFabClicked: (CardId: Int) -> Unit
+    onFabClicked: (CardId: Int) -> Unit,
+    selectedFolder: Int?
 ){
     FloatingActionButton(onClick = {
-        onFabClicked(-1)
+        if (selectedFolder != null) {
+            onFabClicked(selectedFolder)
+        }
     }) {
         Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = stringResource(id = R.string.add_button))
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = stringResource(id = R.string.play_button))
     }
 }
 

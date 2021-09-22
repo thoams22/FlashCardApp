@@ -1,4 +1,4 @@
-package com.example.flashcard.ui.theme.screens.folderList
+package com.example.flashcard.screens.folderList
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ fun FolderListAppBar(
 
 @Composable
 fun DefaultListAppBar(onSearchClicked: ()-> Unit){
+
     TopAppBar(title = {
         Text(text = stringResource(id = R.string.list_screen_title))
     },
