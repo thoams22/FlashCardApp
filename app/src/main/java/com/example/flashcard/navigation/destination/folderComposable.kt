@@ -3,6 +3,7 @@ package com.example.flashcard.navigation.destination
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import com.example.flashcard.constants.FOLDER_ARGUMENT_KEY
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.screens.folder.FolderScreen
 
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.folderComposable(
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action) -> Unit,

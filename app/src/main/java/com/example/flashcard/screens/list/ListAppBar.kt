@@ -72,9 +72,8 @@ fun DefaultListAppBar(
         )
 
     },title = {
-        Text(text = stringResource(id = R.string.FolderName, selectedFolder.folderName))
+        Text(text = "")
     },
-
         actions={
                 ListAppBarActions(onSearchClicked = onSearchClicked, navigateToFolderScreen = navigateToFolderScreen,
                     selectedFolder = selectedFolder.folderId, navigateToTaskScreen=navigateToTaskScreen)

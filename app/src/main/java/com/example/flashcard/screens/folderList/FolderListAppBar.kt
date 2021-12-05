@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
@@ -24,13 +25,14 @@ import com.example.flashcard.database.CardViewModel
 fun FolderListAppBar(
                  cardViewModel: CardViewModel,
                  searchAppBarState: SearchAppBarState,
-                 searchTextState: String
+                 searchTextState: String,
+                 navigateToFolderScreen: (Int)->Unit
 ) {
     when(searchAppBarState){
         SearchAppBarState.CLOSED -> {
             DefaultListAppBar(onSearchClicked = {
                 cardViewModel.searchAppBarState.value = SearchAppBarState.OPENED
-            })
+            }, navigateToFolderScreen=navigateToFolderScreen)
         }
 
         else-> {
@@ -46,24 +48,34 @@ fun FolderListAppBar(
 }
 
 @Composable
-fun DefaultListAppBar(onSearchClicked: ()-> Unit){
+fun DefaultListAppBar(onSearchClicked: ()-> Unit,
+                      navigateToFolderScreen: (Int)-> Unit){
 
     TopAppBar(title = {
         Text(text = stringResource(id = R.string.list_screen_title))
     },
         actions={
-            ListAppBarActions(onSearchClicked = onSearchClicked)
+            ListAppBarActions(onSearchClicked = onSearchClicked, navigateToFolderScreen=navigateToFolderScreen)
         },
         backgroundColor = MaterialTheme.colors.primary)
 }
 
 @Composable
-fun ListAppBarActions(onSearchClicked: ()->Unit){
+fun ListAppBarActions(onSearchClicked: ()->Unit, navigateToFolderScreen: (Int)->Unit){
     SearchAction(
         onSearchClicked = onSearchClicked
     )
+    AddAction(navigateToFolderScreen = navigateToFolderScreen)
 }
-
+@Composable
+fun AddAction(navigateToFolderScreen: (Int)->Unit){
+    IconButton(onClick = { navigateToFolderScreen(-1)})
+    {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = stringResource(id = R.string.add_button))
+    }
+}
 @Composable
 fun SearchAction(onSearchClicked: ()-> Unit){
     IconButton(onClick = {onSearchClicked()}

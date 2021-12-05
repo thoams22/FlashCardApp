@@ -9,12 +9,14 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action
 import com.example.flashcard.database.Card
 import com.example.flashcard.database.CardViewModel
+import com.example.flashcard.database.Folder
 
 @Composable
 fun CardScreen(
     selectedCard: Card?,
     navigateToListScreen: (action: Action, Int)->Unit,
-    cardViewModel: CardViewModel, folderName: Int){
+    cardViewModel: CardViewModel,
+    selectedFolder: Folder?){
 
     val question: String by cardViewModel.question
     val reponse: String by cardViewModel.reponse
@@ -23,7 +25,7 @@ fun CardScreen(
     Scaffold(
     topBar = {
         CardAppBar(
-            folderId = folderName,
+            folderId = selectedFolder!!.folderId,
             selectedCard = selectedCard,
             navigateToListScreen = { action, string ->
                 if(action == Action.NO_ACTION){

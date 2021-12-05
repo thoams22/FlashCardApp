@@ -1,5 +1,6 @@
 package com.example.flashcard.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -11,24 +12,26 @@ import com.example.flashcard.Action
 import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
+import com.example.flashcard.database.Folder
 import com.example.flashcard.screens.list.ListAppBar
 import com.example.flashcard.screens.list.ListContent
 import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action)-> Unit,
-    selectedFolder: Int?,
+    selectedFolder: Folder?,
     navigateToFolderScreen: (Int)->Unit,
     navigateToLearningScreen: (Int) -> Unit
 )
 {    LaunchedEffect(key1 = true){
     if (selectedFolder != null) {
-        cardViewModel.getFolderWithCards(selectedFolder)
-        cardViewModel.getSelectedFolder(selectedFolder)
+        cardViewModel.getFolderWithCards(selectedFolder.folderId)
+        cardViewModel.getSelectedFolder(selectedFolder.folderId)
     }
     }
 
@@ -65,20 +68,20 @@ Scaffold(
     content = {
         ListContent(
         cards=folderWithCardsList,
+            folder=selceF,
         navigateToTaskScreen = navigateToTaskScreen,
         searchedCards = searchedCard,
         searchAppBarState = searchAppBarState,
-            cardViewModel = cardViewModel,
         onSwipeToDelete = {
             action, card ->
             cardViewModel.action.value = action
             if (selectedFolder != null) {
-                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder)
+                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder.folderId)
             }
         }
     )},
     floatingActionButton = {
-        ListFab(onFabClicked = navigateToLearningScreen, selectedFolder = selectedFolder)
+        ListFab(onFabClicked = navigateToLearningScreen, selectedFolder = selectedFolder?.folderId)
     },
     )
 }

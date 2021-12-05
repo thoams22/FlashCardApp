@@ -5,12 +5,14 @@ import android.widget.Toast
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action
 import com.example.flashcard.KeyboardState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 
+@ExperimentalComposeUiApi
 @Composable
 fun FolderScreen(
     selectedFolder: Folder?,
@@ -18,7 +20,9 @@ fun FolderScreen(
     cardViewModel: CardViewModel,
     navigateToListScreen: (Action, Int)-> Unit
 ){
-    val folderName: String by cardViewModel.folderName
+    //val folderName: String by cardViewModel.folderName
+    //val folderRelativePosition: String by cardViewModel.folderRelativePosition
+
     if (selectedFolder != null) {
         cardViewModel.ancientFolderId.value = selectedFolder.folderId
     }
@@ -51,11 +55,25 @@ fun FolderScreen(
             )
         },
         content = {
+            if(selectedFolder != null){
                 FolderContent(
-                    folderName = folderName,
-                    onFolderNameChange = {cardViewModel.folderName.value = it},
+                    folderName = selectedFolder.folderName,
+                    folderRelativePosition = selectedFolder.folderRelativePosition,
+                    onFolderNameChange = {folderName: String, folderRelativePosition: String ->
+                        cardViewModel.folderName.value = folderName
+                        cardViewModel.folderRelativePosition.value = folderRelativePosition},
+                    cardViewModel =cardViewModel
+                )}
+            else{
+                FolderContent(
+                    folderName = "",
+                    folderRelativePosition = "",
+                    onFolderNameChange = {folderName: String, folderRelativePosition: String ->
+                        cardViewModel.folderName.value = folderName
+                        cardViewModel.folderRelativePosition.value = folderRelativePosition},
                     cardViewModel =cardViewModel
                 )
+            }
         }
     )
 }

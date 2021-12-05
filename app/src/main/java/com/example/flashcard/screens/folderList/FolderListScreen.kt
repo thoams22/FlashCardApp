@@ -14,8 +14,6 @@ import com.example.flashcard.Action
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
 
-
-
 @ExperimentalMaterialApi
 @Composable
 fun FolderListScreen(
@@ -45,7 +43,8 @@ fun FolderListScreen(
     FolderListAppBar(
         cardViewModel = cardViewModel,
         searchAppBarState = searchAppBarState,
-        searchTextState = searchTextState
+        searchTextState = searchTextState,
+        navigateToFolderScreen=navigateToFolderScreen
     )
 },
     content = {
@@ -60,23 +59,8 @@ fun FolderListScreen(
 
         }
     )
-},
-    floatingActionButton = {
-    FolderFab(onFabClicked = navigateToFolderScreen)
-})
+}
+)
 }
 
-@Composable
-fun FolderFab(
-    onFabClicked: (folderName: Int) -> Unit
-){
-    FloatingActionButton(onClick = {
-        onFabClicked(-1)
-    }) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = stringResource(id = com.example.flashcard.R.string.add_button)
-        )
-    }
-}
 

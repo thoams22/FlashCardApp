@@ -7,8 +7,8 @@ import com.example.flashcard.constants.LIST_SCREEN
 
 class Screens(navController: NavController) {
 
-    val list: (Action, Int) -> Unit = { action, folderName ->
-        navController.navigate("list/$folderName/${action.name}"){
+    val list: (Action, Int) -> Unit = { action, folderId ->
+        navController.navigate("list/$folderId/${action.name}"){
             popUpTo(LIST_SCREEN) {inclusive=true}
         }
     }
@@ -23,8 +23,8 @@ class Screens(navController: NavController) {
         }
     }
 
-    val folder:(Int)-> Unit = {folderName ->
-        navController.navigate("folder/$folderName")
+    val folder:(Int)-> Unit = {folderId ->
+        navController.navigate("folder/$folderId")
     }
 
     val learning:(Int)->Unit = {folderId->

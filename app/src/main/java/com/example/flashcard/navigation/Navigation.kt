@@ -1,8 +1,10 @@
 package com.example.flashcard.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.flashcard.constants.FOLDER_LIST_SCREEN
@@ -11,6 +13,8 @@ import com.example.flashcard.constants.LIST_SCREEN
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.navigation.destination.*
 
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun SetupNavigation(

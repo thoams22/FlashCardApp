@@ -1,6 +1,8 @@
 package com.example.flashcard.screens.list
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,13 +11,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -27,26 +29,30 @@ import com.example.flashcard.database.Card
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 import com.example.flashcard.database.FolderWithCards
+import com.wakaztahir.composejlatex.LatexAlignment
+import com.wakaztahir.composejlatex.latexImageBitmap
 
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
     cards: RequestState<List<FolderWithCards>>,
+    folder: Folder?,
     searchedCards: RequestState<List<Card>>,
     searchAppBarState: SearchAppBarState,
     navigateToTaskScreen: (cardId: Int) -> Unit,
-    onSwipeToDelete: (Action, Card)->Unit,
-    cardViewModel: CardViewModel
+    onSwipeToDelete: (Action, Card)->Unit
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedCards is RequestState.Success){
 
-            HandleListContentSearched(cards = searchedCards.data, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
+            HandleListContentSearched(folder= folder, cards = searchedCards.data, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
         }
     }else{
         if (cards is RequestState.Success && cards.data.isNotEmpty()){
             HandleListContent(
+                folder = folder,
                 cards = cards.data,
                 navigateToTaskScreen = navigateToTaskScreen,
                 onSwipeToDelete = onSwipeToDelete
@@ -58,10 +64,12 @@ fun ListContent(
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun HandleListContent(
     cards: List<FolderWithCards>,
+    folder: Folder?,
     onSwipeToDelete: (Action, Card)->Unit,
     navigateToTaskScreen: (cardId: Int) -> Unit
 
@@ -69,32 +77,47 @@ fun HandleListContent(
     if(cards.first().cards.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(cards = cards.first().cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
+        DisplayCard(folder = folder, cards = cards.first().cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
     }
 }
 
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun HandleListContentSearched(
+    folder: Folder?,
     cards: List<Card>,
     onSwipeToDelete: (Action, Card)->Unit,
     navigateToTaskScreen: (cardId: Int) -> Unit
-
 ){
-
     if(cards.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(cards = cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
+        DisplayCard(folder = folder, cards = cards, navigateToTaskScreen = navigateToTaskScreen, onSwipeToDelete = onSwipeToDelete)
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
-fun DisplayCard(cards: List<Card>, navigateToTaskScreen: (cardId: Int) -> Unit, onSwipeToDelete: (Action, Card)->Unit){
+fun DisplayCard(folder: Folder?,cards: List<Card>, navigateToTaskScreen: (cardId: Int) -> Unit, onSwipeToDelete: (Action, Card)->Unit){
 
     LazyColumn{
+        stickyHeader{
+            val context = LocalContext.current
+            var  imageBitmap by remember {
+                mutableStateOf(latexImageBitmap(context, folder!!.folderName, alignment = LatexAlignment.Start))
+            }
+            Image(
+                bitmap = imageBitmap,
+                contentDescription = null
+            )
+            kotlin.runCatching { latexImageBitmap(context = context, folder!!.folderName,alignment = LatexAlignment.Start) }
+                .getOrNull()?.let { bitmap ->
+                    imageBitmap = bitmap
+                }
+        }
         items(
             items = cards,
             key = {
@@ -114,7 +137,9 @@ fun DisplayCard(cards: List<Card>, navigateToTaskScreen: (cardId: Int) -> Unit, 
                 directions = setOf(DismissDirection.EndToStart),
                 dismissThresholds = { FractionalThreshold(fraction = 0.3f) },
                 background = { RedBackground(degrees = degrees)},
-                dismissContent = {CardItem(card = card, navigateToTaskScreen = navigateToTaskScreen)}
+                dismissContent = {
+                    CardItem(card = card, navigateToTaskScreen = navigateToTaskScreen)
+                }
             )
         }
     }

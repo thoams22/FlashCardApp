@@ -34,7 +34,7 @@ fun NavGraphBuilder.cardComposable(
 
     CardScreen(selectedCard = selectedCard,
         navigateToListScreen = navigateToListScreen,
-        cardViewModel = cardViewModel, folderName= selectedFolder!!.folderId)
+        cardViewModel = cardViewModel, selectedFolder = selectedFolder)
     }
 }
 

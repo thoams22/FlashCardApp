@@ -181,6 +181,7 @@ class CardViewModel @Inject constructor(
 
     val folderName: MutableState<String> = mutableStateOf("")
     val ancientFolderId: MutableState<Int> = mutableStateOf(0)
+    val folderRelativePosition: MutableState<String> = mutableStateOf("")
 
     fun searchDatabaseFolder(searchQuery: String){
         _searchFolders.value = RequestState.Loading
@@ -201,9 +202,11 @@ class CardViewModel @Inject constructor(
         if (selectedFolder != null){
             folderid.value = selectedFolder.folderId
             folderName.value = selectedFolder.folderName
+            folderRelativePosition.value = selectedFolder.folderRelativePosition
         }else{
             folderid.value = 0
             folderName.value = ""
+            folderRelativePosition.value = ""
         }
         viewModelScope.launch{
             repository.getSelectedFolder(folderId = folderid.value).collect {
@@ -225,7 +228,8 @@ class CardViewModel @Inject constructor(
     private fun insertFolder(){
         viewModelScope.launch {
             val folder = Folder(
-                folderName = folderName.value
+                folderName = folderName.value,
+                folderRelativePosition = folderRelativePosition.value
             )
             repository.insertFolder(folder = folder)
         }
@@ -246,7 +250,8 @@ class CardViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO){
                 val folder  =Folder(
                     folderId = folderid.value,
-                    folderName = folderName.value
+                    folderName = folderName.value,
+                    folderRelativePosition = folderRelativePosition.value
                 )
                 repository.deleteFolder(folder = folder)
             }
@@ -263,7 +268,8 @@ class CardViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO){
             val folder  =Folder(
                 folderId = folderid.value,
-                folderName = folderName.value
+                folderName = folderName.value,
+                folderRelativePosition = folderRelativePosition.value
             )
             repository.updateFolder(folder = folder)
         }

@@ -1,6 +1,7 @@
 package com.example.flashcard.screens.folderList
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,9 @@ import com.example.flashcard.*
 import com.example.flashcard.R
 import com.example.flashcard.database.Folder
 import com.example.flashcard.screens.list.EmptyContent
+import com.wakaztahir.composejlatex.LatexAlignment
+import com.wakaztahir.composejlatex.latexImageBitmap
+
 @ExperimentalMaterialApi
 @Composable
 fun FolderListContent(
@@ -59,7 +64,7 @@ fun HandleListContent(
     if(folders.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(
+        DisplayFolder(
             folders = folders,
             navigateToListScreen = navigateToListScreen,
             onSwipeToDelete = onSwipeToDelete
@@ -69,7 +74,7 @@ fun HandleListContent(
 
 @ExperimentalMaterialApi
 @Composable
-fun DisplayCard(
+fun DisplayFolder(
     folders: List<Folder>,
     navigateToListScreen: (Action, Int) -> Unit,
     onSwipeToDelete: (Action, Folder) -> Unit
@@ -134,13 +139,19 @@ fun FolderItem(
         }
     ) {
         Column(modifier = Modifier
-            .padding(12.dp)
-            .fillMaxWidth()) {
-            Text(modifier = Modifier.fillMaxWidth(),
-                text = folder.folderName,
-                style = MaterialTheme.typography.h5,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis)
+            .padding(12.dp), horizontalAlignment = Alignment.Start) {
+            val context = LocalContext.current
+            var imageBitmap by remember {
+                mutableStateOf(latexImageBitmap(context, folder.folderName, alignment = LatexAlignment.Start))
+            }
+            Image(
+                bitmap = imageBitmap,
+                contentDescription = null
+            )
+            kotlin.runCatching { latexImageBitmap(context = context, folder.folderName,alignment = LatexAlignment.Start) }
+                .getOrNull()?.let { bitmap ->
+                    imageBitmap = bitmap
+                }
         }
     }
 }
