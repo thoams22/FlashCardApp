@@ -2,9 +2,9 @@ package com.example.flashcard.screens.folder
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action
@@ -12,17 +12,14 @@ import com.example.flashcard.KeyboardState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Composable
 fun FolderScreen(
     selectedFolder: Folder?,
     navigateToFolderListScreen: (Action)->Unit,
-    cardViewModel: CardViewModel,
-    navigateToListScreen: (Action, Int)-> Unit
+    cardViewModel: CardViewModel
 ){
-    //val folderName: String by cardViewModel.folderName
-    //val folderRelativePosition: String by cardViewModel.folderRelativePosition
-
     if (selectedFolder != null) {
         cardViewModel.ancientFolderId.value = selectedFolder.folderId
     }
@@ -42,16 +39,7 @@ fun FolderScreen(
                             displayToast(context = context)
                         }
                     }
-                }, navigateToListScreen = { action: Action, _: Int ->
-                    if(action == Action.NO_ACTION){
-                        navigateToListScreen(action, cardViewModel.ancientFolderId.value) }
-                    else{
-                    if (cardViewModel.validateFolderFields()){
-                        navigateToListScreen(action, cardViewModel.folderid.value)
-                    }else{
-                        displayToast(context = context)
-                    }
-                }}
+                }
             )
         },
         content = {

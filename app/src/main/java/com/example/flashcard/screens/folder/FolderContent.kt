@@ -1,18 +1,20 @@
 package com.example.flashcard.screens.folder
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.*
-import com.example.flashcard.KeyboardState.*
+import com.example.flashcard.HandleAction
+import com.example.flashcard.KeyboardAffiched
 import com.example.flashcard.database.CardViewModel
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
@@ -20,6 +22,7 @@ import com.wakaztahir.composejlatex.latexImageBitmap
 const val lengthRedBar = 18
 const val redBar = "\\textcolor{red}{|}"
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Composable
 fun FolderContent(
@@ -28,6 +31,7 @@ fun FolderContent(
     onFolderNameChange: (folderName:String, folderRelativePosition:String)->Unit,
     cardViewModel: CardViewModel
 ){
+    val textColor = MaterialTheme.colors.onSurface
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), content = {
@@ -39,14 +43,18 @@ fun FolderContent(
         val context = LocalContext.current
 
         var  imageBitmap by remember {
-            mutableStateOf(latexImageBitmap(context, latex, alignment = LatexAlignment.Start))
+            mutableStateOf(latexImageBitmap(context, latex, alignment = LatexAlignment.Start, color = textColor))
         }
-            Image(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+        Card(modifier = Modifier
+            .clip(RoundedCornerShape(15.dp))
+            .fillMaxWidth()
+            .heightIn(50.dp),
+        ) {
+            Image(modifier = Modifier.background(MaterialTheme.colors.onSecondary),
                 bitmap = imageBitmap,
                 contentDescription = null
             )
-
+        }
         KeyboardAffiched(cardViewModel = cardViewModel, onKeyPressed = {text:String, taille:String->
             latex = latex.replace(redBar, "")
             if(text.contains("{")){
@@ -60,117 +68,21 @@ fun FolderContent(
             positionInRelative += 1
             onFolderNameChange(latex.replace(redBar, ""), relativePosition)
         },
-            onPositionChanged = {
-                if(it == "LEFT" && position > 0){
-                    position -= relativePosition[positionInRelative-1].code -48
-                    latex = latex.replace(redBar, "")
-                    latex = latex.substring(0,position) + redBar + latex.substring(position)
-                    positionInRelative -= 1
-                }
-                else if(it == "RIGHT" && position < latex.length - lengthRedBar){
-                    position += relativePosition[positionInRelative].code -48
-                    latex = latex.replace(redBar, "")
-                    latex = latex.substring(0,position) + redBar + latex.substring(position)
-                    positionInRelative += 1
-                }
-                else if(it == "DELETE" && position > 0){
-                    // identify when symbol to delete check if all {}/[] are empty and delete them without letting {}/[] alone or just one
-                    if(latex[position-1] == '{' || latex[position-1] == '['|| latex[position-1] == '}') {
-                        if(relativePosition[positionInRelative-1].code > '3'.code){
-                            if(relativePosition[positionInRelative].code == '1'.code && latex[position+ lengthRedBar] == '}'){
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+1)
-                                relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(1)
-                                positionInRelative -= 1
-                            }
-                            else if(relativePosition[positionInRelative].code == '3'.code && latex.substring(position + lengthRedBar, position + lengthRedBar+4) == "}_{}"){
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+4)
-                                relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
-                                positionInRelative -= 1
-                            }
-                            else if(relativePosition[positionInRelative].code == '2'.code && latex.substring(position + lengthRedBar, position + lengthRedBar+3) == "]{}"){
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+3)
-                                relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
-                                positionInRelative -= 1
-                            }
-                            // if {}/[] are not empty just move left
-                            else{
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position)
-                                positionInRelative -= 1
-                            }
-                        }
-                        else if(relativePosition[positionInRelative-1].code == '2'.code){
-                            if(relativePosition[positionInRelative].code == '1'.code && latex[position+ lengthRedBar] == '}'){
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+1)
-                                relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(1)
-                                positionInRelative -= 1
-                            }
-                            else if(relativePosition[positionInRelative].code == '3'.code && latex.substring(position + lengthRedBar, position + lengthRedBar+4) == "}_{}"){
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+4)
-                                relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
-                                positionInRelative -= 1
-                            }
-                            // if {}/[] are not empty just move left
-                            else{
-                                position -= relativePosition[positionInRelative-1].code -48
-                                latex = latex.replace(redBar, "")
-                                latex = latex.substring(0,position) + redBar + latex.substring(position)
-                                positionInRelative -= 1
-                            }
-                        }
-                        // if not the last part of symbol just move left
-                        else{
-                            position -= relativePosition[positionInRelative-1].code -48
-                            latex = latex.replace(redBar, "")
-                            latex = latex.substring(0,position) + redBar + latex.substring(position)
-                            positionInRelative -= 1
-                        }
-                    }
-                    else{
-                        position -= relativePosition[positionInRelative-1].code -48
-                        latex = latex.replace(redBar, "")
-                        latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48))
-                        relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(0)
-                        positionInRelative -= 1
-                    }
-                }
+            onActionPress = { action: String ->
+                HandleAction(
+                    action = action, pos = position, relPos = relativePosition, positionInRel = positionInRelative, lat = latex,
+                    result = {pos, relPos, posInRel, lat ->
+                        position=pos
+                    relativePosition = relPos
+                    positionInRelative = posInRel
+                    latex=lat}
+                )
             }
         )
-        kotlin.runCatching { latexImageBitmap(context = context, latex,alignment = LatexAlignment.Start) }
+        kotlin.runCatching { latexImageBitmap(context = context, latex,alignment = LatexAlignment.Start, color = textColor) }
             .getOrNull()?.let { bitmap ->
                 imageBitmap = bitmap
             }
         onFolderNameChange(latex.replace(redBar, ""), relativePosition)
     }, verticalArrangement = Arrangement.SpaceBetween)
-}
-@Composable
-fun KeyboardAffiched(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)->Unit, onPositionChanged: (String)-> Unit){
-    when (cardViewModel.KeyboardState.value){
-            DEFAULT -> {
-                Keyboard(cardViewModel, onKeyPressed, onPositionChanged)
-            }
-            MATH -> {
-                MathKeyboard(cardViewModel, onKeyPressed, onPositionChanged)
-            }
-            GREEK -> {
-                GreekKeyboard(cardViewModel, onKeyPressed, onPositionChanged)
-            }
-            GREEKMAJ -> {
-                GreekMajKeyboard(cardViewModel, onKeyPressed, onPositionChanged)
-            }
-            DEFAULTMAJ ->{
-                MajKeyboard(cardViewModel, onKeyPressed, onPositionChanged)
-            }
-        }
 }

@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val cardViewModel = ViewModelProvider(this).get(CardViewModel::class.java)
         setContent {
-            FlashCardTheme {
+            FlashCardTheme(darkTheme = true) {
                 navController = rememberNavController()
                 SetupNavigation(navController = navController,cardviewModel = cardViewModel)
             }

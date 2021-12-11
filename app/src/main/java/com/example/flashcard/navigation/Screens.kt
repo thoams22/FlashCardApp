@@ -2,15 +2,11 @@ package com.example.flashcard.navigation
 
 import androidx.navigation.NavController
 import com.example.flashcard.Action
-import com.example.flashcard.constants.FOLDER_LIST_SCREEN
-import com.example.flashcard.constants.LIST_SCREEN
 
 class Screens(navController: NavController) {
 
     val list: (Action, Int) -> Unit = { action, folderId ->
-        navController.navigate("list/$folderId/${action.name}"){
-            popUpTo(LIST_SCREEN) {inclusive=true}
-        }
+        navController.navigate("list/$folderId/${action.name}")
     }
 
     val task: (Int) -> Unit = {cardId->
@@ -18,9 +14,7 @@ class Screens(navController: NavController) {
     }
 
     val folderList:(Action) -> Unit = { action ->
-        navController.navigate("folderList/${action.name}"){
-            popUpTo(FOLDER_LIST_SCREEN) {inclusive=true}
-        }
+        navController.navigate("folderList/${action.name}")
     }
 
     val folder:(Int)-> Unit = {folderId ->
@@ -29,5 +23,9 @@ class Screens(navController: NavController) {
 
     val learning:(Int)->Unit = {folderId->
         navController.navigate("learning/$folderId")
+    }
+
+    val revision:(Int)->Unit = {folderId->
+        navController.navigate("revision/$folderId")
     }
 }

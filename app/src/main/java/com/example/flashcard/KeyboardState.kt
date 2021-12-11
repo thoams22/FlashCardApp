@@ -5,5 +5,7 @@ enum class KeyboardState {
     MATH,
     DEFAULTMAJ,
     GREEK,
-    GREEKMAJ
+    GREEKMAJ,
+    CHIFFRE,
+    MATHMAJ
 }

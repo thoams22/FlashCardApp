@@ -1,4 +1,4 @@
-package com.example.flashcard.screens.learning
+package com.example.flashcard.screens.revision
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -13,7 +13,7 @@ import com.example.flashcard.R
 import com.example.flashcard.database.Folder
 
 @Composable
-fun LearningAppBar(navigateToListScreen: (Action, Int)->Unit, selectedFolder: Folder?){
+fun RevisionAppBar(navigateToListScreen: (Action, Int)->Unit, selectedFolder: Folder?){
 
     TopAppBar(navigationIcon = {
         BackAction(
@@ -21,11 +21,11 @@ fun LearningAppBar(navigateToListScreen: (Action, Int)->Unit, selectedFolder: Fo
             folderId = selectedFolder!!.folderId
         )
     },
-    title = { Text(text = "Learning") })
+        title = { Text(text = "Revision") })
 }
 
 @Composable
-fun BackAction(onBackClicked: (Action,Int)-> Unit, folderId: Int){
+fun BackAction(onBackClicked: (Action, Int)-> Unit, folderId: Int){
     IconButton(onClick = {onBackClicked(Action.NO_ACTION, folderId)}) {
         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
     }

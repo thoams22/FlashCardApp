@@ -7,9 +7,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.flashcard.constants
+import com.example.flashcard.Constants
 import com.example.flashcard.Action
-import com.example.flashcard.constants.CARD_ARGUMENT_KEY
+import com.example.flashcard.Constants.CARD_ARGUMENT_KEY
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.screens.card.CardScreen
 
@@ -17,7 +17,7 @@ fun NavGraphBuilder.cardComposable(
     cardViewModel: CardViewModel,
     navigateToListScreen: (Action, Int) -> Unit){
     composable(
-        route = constants.CARD_SCREEN,
+        route = Constants.CARD_SCREEN,
         arguments = listOf(navArgument(CARD_ARGUMENT_KEY){
             type = NavType.IntType
         })

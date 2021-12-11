@@ -1,15 +1,12 @@
 package com.example.flashcard.screens.folderList
 
-import android.util.Log
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import com.example.flashcard.Action
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
@@ -53,11 +50,12 @@ fun FolderListScreen(
         navigateToListScreen = navigateToListScreen,
         searchedFolders = searchedFolder,
         searchAppBarState = searchAppBarState,
-        onSwipeToDelete = { action, folder ->
+        onDeleteClicked = { action, folder ->
             cardViewModel.getSelectedFolder(folder.folderId)
             cardViewModel.action.value = action
 
-        }
+        },
+        onModifyClicked = navigateToFolderScreen
     )
 }
 )

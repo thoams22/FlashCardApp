@@ -1,20 +1,26 @@
-package com.example.flashcard.screens
+package com.example.flashcard.screens.list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.flashcard.Action
 import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
-import com.example.flashcard.screens.list.ListAppBar
-import com.example.flashcard.screens.list.ListContent
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -25,10 +31,13 @@ fun ListScreen(
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action)-> Unit,
     selectedFolder: Folder?,
-    navigateToFolderScreen: (Int)->Unit,
-    navigateToLearningScreen: (Int) -> Unit
+    navigateToLearningScreen: (Int) -> Unit,
+    navigateToRevisionScreen: (Int) -> Unit
 )
-{    LaunchedEffect(key1 = true){
+{
+
+
+    LaunchedEffect(true){
     if (selectedFolder != null) {
         cardViewModel.getFolderWithCards(selectedFolder.folderId)
         cardViewModel.getSelectedFolder(selectedFolder.folderId)
@@ -36,9 +45,8 @@ fun ListScreen(
     }
 
     val action by cardViewModel.action
-
-    val selceF by cardViewModel.selectedFolder.collectAsState()
     val folderWithCardsList by cardViewModel.getFolderWithCards.collectAsState()
+    val selceF by cardViewModel.selectedFolder.collectAsState()
     val searchedCard by cardViewModel.searchCards.collectAsState()
     val searchAppBarState: SearchAppBarState by cardViewModel.searchAppBarState
     val searchTextState: String by cardViewModel.searchTextState
@@ -61,7 +69,6 @@ Scaffold(
             searchTextState = searchTextState,
             navigateToFolderListScreen= navigateToFolderListScreen,
             selectedFolder = selceF,
-            navigateToFolderScreen = navigateToFolderScreen,
             navigateToTaskScreen = navigateToTaskScreen
         )
     },
@@ -81,21 +88,44 @@ Scaffold(
         }
     )},
     floatingActionButton = {
-        ListFab(onFabClicked = navigateToLearningScreen, selectedFolder = selectedFolder?.folderId)
+        ListFab(onLearnClicked = navigateToLearningScreen, onRevisionClicked = navigateToRevisionScreen, selectedFolder = selectedFolder?.folderId)
     },
     )
 }
 
 @Composable
 fun ListFab(
-    onFabClicked: (CardId: Int) -> Unit,
+    onLearnClicked: (CardId: Int) -> Unit,
+    onRevisionClicked: (CardId: Int) -> Unit,
     selectedFolder: Int?
 ){
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
     FloatingActionButton(onClick = {
-        if (selectedFolder != null) {
-            onFabClicked(selectedFolder)
-        }
-    }) {
+        openDialog = true
+
+    }) {if(openDialog){
+        Dialog(onDismissRequest = { openDialog = false },
+            properties = DialogProperties(dismissOnClickOutside = true),
+            content = {
+                Surface(modifier = Modifier.widthIn(180.dp).heightIn(180.dp), shape = RectangleShape, border = BorderStroke(1.dp, Color.LightGray)) {
+                Column(modifier = Modifier.fillMaxWidth()){
+                    Text(modifier = Modifier.padding(10.dp), fontSize = 30.sp, text = "Type of learning", textAlign = TextAlign.Left)
+                Text(modifier = Modifier.padding(10.dp),text = "Revision help to familiarize with the cards\nLearning is a methods to verify that you now the cards")
+                Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = { onLearnClicked(selectedFolder!!) }) {
+                        Text(text = "Learning")
+                    }
+                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = {onRevisionClicked(selectedFolder!!)}) {
+                        Text(text = "Revision")
+                    }
+                }
+                }
+                }
+            }
+        )
+    }
         Icon(
             imageVector = Icons.Filled.PlayArrow,
             contentDescription = stringResource(id = R.string.play_button))

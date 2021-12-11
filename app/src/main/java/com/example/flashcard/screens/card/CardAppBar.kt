@@ -5,16 +5,13 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.flashcard.Action
-import com.example.flashcard.DisplayAlertDialog
 import com.example.flashcard.R
 import com.example.flashcard.database.Card
 
@@ -51,7 +48,7 @@ fun ExistingCardAppBar(
         navigationIcon = { CloseAction(onCloseClicked = navigateToListScreen, folderId=selectedCard.folderId) },
         title = {
             Text(
-                text = selectedCard.question,
+                text = "",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis)
         },
@@ -70,21 +67,6 @@ fun ExistingCardAppBarAction(
     selectedCard: Card,
     navigateToListScreen: (Action,Int)->Unit
 ){
-    var openDialog by remember {
-        mutableStateOf(false)
-    }
-    DisplayAlertDialog(
-        title = stringResource(id = R.string.delete_card, selectedCard.question),
-        message = stringResource(
-            id = R.string.delete_card_confirmation,
-            selectedCard.question
-        ),
-        openDialog = openDialog,
-        closeDialog = { openDialog = false },
-        onYesClicked = { navigateToListScreen(Action.DELETE_CARD, selectedCard.folderId)}
-    )
-
-    DeleteAction(onDeleteClicked = {openDialog = true})
     UpdateAction(onUpdateClicked = navigateToListScreen, folderId= selectedCard.folderId)
 }
 
@@ -104,12 +86,6 @@ fun BackAction(onBackClicked: (Action,Int)-> Unit, folderId: Int){
 fun CloseAction(onCloseClicked: (Action,Int)-> Unit, folderId: Int){
     IconButton(onClick = {onCloseClicked(Action.NO_ACTION, folderId)}) {
         Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(id = R.string.close_icons))
-    }
-}
-@Composable
-fun DeleteAction(onDeleteClicked: ()->Unit){
-    IconButton(onClick = {onDeleteClicked()}) {
-        Icon(imageVector = Icons.Filled.Delete, contentDescription = stringResource(id = R.string.delete_icon))
     }
 }
 @Composable

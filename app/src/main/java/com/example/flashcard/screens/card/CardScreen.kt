@@ -20,6 +20,8 @@ fun CardScreen(
 
     val question: String by cardViewModel.question
     val reponse: String by cardViewModel.reponse
+    val reponseRelativePosition: String by cardViewModel.reponseRelativePosition
+    val questionRelativePosition: String by cardViewModel.questionRelativePosition
 
     val context = LocalContext.current
     Scaffold(
@@ -43,10 +45,18 @@ fun CardScreen(
     content = {
         CardContent(
         question = question,
-        onQuestionChange = {cardViewModel.question.value = it},
+            reponseRelativePosition = reponseRelativePosition,
+        onQuestionChange = {question, questionRelativePosition ->
+            cardViewModel.question.value = question
+            cardViewModel.questionRelativePosition.value = questionRelativePosition},
         reponse = reponse,
-        onReponseChange = {cardViewModel.reponse.value = it}
-    )}
+            questionRelativePosition = questionRelativePosition,
+        onReponseChange = {reponse, reponseRelativePosition->
+            cardViewModel.reponse.value = reponse
+            cardViewModel.reponseRelativePosition.value = reponseRelativePosition},
+            cardViewModel = cardViewModel
+    )
+    }
 )
 }
 

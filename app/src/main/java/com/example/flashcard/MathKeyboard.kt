@@ -2,23 +2,25 @@ package com.example.flashcard
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.KeyboardReturn
 import androidx.compose.material.icons.filled.SpaceBar
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.Backspace
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.flashcard.KeyboardState.*
 import com.example.flashcard.database.CardViewModel
+import com.example.flashcard.screens.folder.lengthRedBar
+import com.example.flashcard.screens.folder.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
 
@@ -94,7 +96,7 @@ fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:St
                     }
                 }, horizontalArrangement = Arrangement.SpaceEvenly)
                 Row(content = {
-                    TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                         Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
                         , contentDescription = null)
                     }
@@ -114,6 +116,185 @@ fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:St
             }, verticalArrangement = Arrangement.Bottom
         )
     }
+
+
+@Composable
+fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {
+    val context = LocalContext.current
+    Column(modifier = Modifier.fillMaxWidth(),
+        content = {
+            Row(content = {
+                TextButton(onClick = { onKeyPressed("_{}^{}", "231") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onKeyPressed("^{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onKeyPressed("_{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                ButtonCustom("0", onKeyPressed = onKeyPressed)
+                ButtonCustom("1", onKeyPressed = onKeyPressed)
+                ButtonCustom("2", onKeyPressed = onKeyPressed)
+                ButtonCustom("3", onKeyPressed = onKeyPressed)
+                ButtonCustom("4", onKeyPressed = onKeyPressed)
+                ButtonCustom("5", onKeyPressed = onKeyPressed)
+                ButtonCustom("6", onKeyPressed = onKeyPressed)
+                ButtonCustom("7", onKeyPressed = onKeyPressed)
+                ButtonCustom("8", onKeyPressed = onKeyPressed)
+                ButtonCustom("9", onKeyPressed = onKeyPressed)
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                ButtonCustom("\\AE ", onKeyPressed = onKeyPressed)
+                ButtonCustom("#", onKeyPressed = onKeyPressed)
+                ButtonCustom("€", onKeyPressed = onKeyPressed)
+                ButtonCustom("_ ", onKeyPressed = onKeyPressed)
+                ButtonCustom(" ", onKeyPressed = onKeyPressed)
+                ButtonCustom("-", onKeyPressed = onKeyPressed)
+                ButtonCustom("+", onKeyPressed = onKeyPressed)
+                ButtonCustom("(", onKeyPressed = onKeyPressed)
+                ButtonCustom(")", onKeyPressed = onKeyPressed)
+                ButtonCustom("/ ", onKeyPressed = onKeyPressed)
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = MATHMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = null)
+                }
+                ButtonCustom("*", onKeyPressed = onKeyPressed)
+                ButtonCustom("\"", onKeyPressed = onKeyPressed, taille = "1")
+                ButtonCustom("\'", onKeyPressed = onKeyPressed, taille = "1")
+                ButtonCustom(":", onKeyPressed = onKeyPressed)
+                ButtonCustom(";", onKeyPressed = onKeyPressed)
+                ButtonCustom("!", onKeyPressed = onKeyPressed)
+                ButtonCustom("?", onKeyPressed = onKeyPressed)
+                TextButton(onClick = { onPositionChanged("DELETE") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                ButtonCustom(",", onKeyPressed = onKeyPressed)
+                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
+                    Icon(imageVector = Icons.Filled.SpaceBar, contentDescription = null, Modifier.size(width = (LocalConfiguration.current.screenWidthDp/4).dp, height = heightSpaceBar.dp))
+                }
+                ButtonCustom(".", onKeyPressed = onKeyPressed)
+                Button(onClick = { onKeyPressed("\\\\ ", "3")}, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Icon(imageVector = Icons.Filled.KeyboardReturn, contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+        }, verticalArrangement = Arrangement.Bottom
+    )
+}
+
+
+@Composable
+fun MathMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {
+    val context = LocalContext.current
+    Column(modifier = Modifier.fillMaxWidth(),
+        content = {
+            Row(content = {
+                TextButton(onClick = { onKeyPressed("_{}^{}", "231") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onKeyPressed("^{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onKeyPressed("_{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                ButtonCustom("~", onKeyPressed = onKeyPressed)
+                ButtonCustom("`", onKeyPressed = onKeyPressed)
+                ButtonCustom("|", onKeyPressed = onKeyPressed)
+                ButtonCustom("´", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\frac{n}{n}", onKeyPressed = onKeyPressed, keysend = "\\frac{}{}", taille = "621")
+                ButtonCustom("*", onKeyPressed = onKeyPressed)
+                ButtonCustom("/", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\  ", onKeyPressed = onKeyPressed, taille = "3")
+                ButtonCustom("\\angle ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\P ", onKeyPressed = onKeyPressed)
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                ButtonCustom("£", onKeyPressed = onKeyPressed)
+                ButtonCustom("$", onKeyPressed = onKeyPressed)
+                ButtonCustom("µ", onKeyPressed = onKeyPressed)
+                ButtonCustom("°", onKeyPressed = onKeyPressed)
+                ButtonCustom("^ ", onKeyPressed = onKeyPressed)
+                ButtonCustom("=", onKeyPressed = onKeyPressed)
+                ButtonCustom("", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\nparallel ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\eth ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\perp ", onKeyPressed = onKeyPressed)
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                ButtonCustom("%", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\bigotimes ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\lim ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\bowtie ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\parallel ", onKeyPressed = onKeyPressed)
+                ButtonCustom("", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\hbar ", onKeyPressed = onKeyPressed)
+                TextButton(onClick = { onPositionChanged("DELETE") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+            Row(content = {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                ButtonCustom("<", onKeyPressed = onKeyPressed)
+                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                        , contentDescription = null)
+                }
+                OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
+                    Icon(imageVector = Icons.Filled.SpaceBar, contentDescription = null, Modifier.size(width = (LocalConfiguration.current.screenWidthDp/4).dp, height = heightSpaceBar.dp))
+                }
+                ButtonCustom(">", onKeyPressed = onKeyPressed)
+                Button(onClick = { onKeyPressed("\\\\ ", "3")}, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Icon(imageVector = Icons.Filled.KeyboardReturn, contentDescription = null)
+                }
+            }, horizontalArrangement = Arrangement.SpaceEvenly)
+        }, verticalArrangement = Arrangement.Bottom
+    )
+}
 
 @Composable
 fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String) -> Unit, onPositionChanged:(String)->Unit) {
@@ -323,7 +504,7 @@ fun GreekKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, tail
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
                         , contentDescription = null)
                 }
@@ -399,7 +580,7 @@ fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
                         , contentDescription = null)
                 }
@@ -424,11 +605,131 @@ fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille
 fun ButtonCustom(latex:String, keysend:String = latex, div:Double = divider, onKeyPressed: (text:String, taille:String)->Unit, taille:String = latex.length.toString(), heigt: Int = height) {
     val width = LocalConfiguration.current.screenWidthDp / div
     val context = LocalContext.current
-
+    val textColor = MaterialTheme.colors.onSurface
     val imageBitmap by remember {
-        mutableStateOf(latexImageBitmap(context, latex, alignment = LatexAlignment.Start))
+        mutableStateOf(latexImageBitmap(context, latex, alignment = LatexAlignment.Start, color = textColor))
     }
     TextButton(onClick = { onKeyPressed(keysend, taille)}, modifier = Modifier.size(width = width.dp, height = heigt.dp)) {
         Image(bitmap = imageBitmap, contentDescription = null)
     }
+}
+
+@Composable
+fun KeyboardAffiched(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)->Unit, onActionPress: (String)-> Unit){
+    when (cardViewModel.KeyboardState.value){
+        DEFAULT -> {
+            Keyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        MATH -> {
+            MathKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        GREEK -> {
+            GreekKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        GREEKMAJ -> {
+            GreekMajKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        DEFAULTMAJ ->{
+            MajKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        MATHMAJ ->{
+            MathMajKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+        CHIFFRE ->{
+            ChiffreKeyboard(cardViewModel, onKeyPressed, onActionPress)
+        }
+    }
+}
+
+fun HandleAction(action:String, pos:Int, relPos:String, positionInRel:Int, lat: String, result:(pos:Int, relPos:String, posInRel:Int, lat:String)->Unit){
+    var position = pos
+    var relativePosition = relPos
+    var positionInRelative = positionInRel
+    var latex = lat
+
+    if(action == "LEFT" && position > 0){
+        position -= relativePosition[positionInRelative-1].code -48
+        latex = latex.replace(redBar, "")
+        latex = latex.substring(0,position) + redBar + latex.substring(position)
+        positionInRelative -= 1
+    }
+    else if(action == "RIGHT" && position < latex.length - lengthRedBar){
+        position += relativePosition[positionInRelative].code -48
+        latex = latex.replace(redBar, "")
+        latex = latex.substring(0,position) + redBar + latex.substring(position)
+        positionInRelative += 1
+    }
+    else if(action == "DELETE" && position > 0){
+        // identify when symbol to delete check if all {}/[] are empty and delete them without letting {}/[] alone or just one
+        if(latex[position-1] == '{' || latex[position-1] == '['|| latex[position-1] == '}') {
+            if(relativePosition[positionInRelative-1].code > '3'.code){
+                if(relativePosition[positionInRelative].code == '1'.code && latex[position+ lengthRedBar] == '}'){
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+1)
+                    relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(1)
+                    positionInRelative -= 1
+                }
+                else if(relativePosition[positionInRelative].code == '3'.code && latex.substring(position + lengthRedBar, position + lengthRedBar +4) == "}_{}"){
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+4)
+                    relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
+                    positionInRelative -= 1
+                }
+                else if(relativePosition[positionInRelative].code == '2'.code && latex.substring(position + lengthRedBar, position + lengthRedBar +3) == "]{}"){
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+3)
+                    relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
+                    positionInRelative -= 1
+                }
+                // if {}/[] are not empty just move left
+                else{
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position)
+                    positionInRelative -= 1
+                }
+            }
+            else if(relativePosition[positionInRelative-1].code == '2'.code){
+                if(relativePosition[positionInRelative].code == '1'.code && latex[position+ lengthRedBar] == '}'){
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+1)
+                    relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(1)
+                    positionInRelative -= 1
+                }
+                else if(relativePosition[positionInRelative].code == '3'.code && latex.substring(position + lengthRedBar, position + lengthRedBar +4) == "}_{}"){
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48)+4)
+                    relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(2)
+                    positionInRelative -= 1
+                }
+                // if {}/[] are not empty just move left
+                else{
+                    position -= relativePosition[positionInRelative-1].code -48
+                    latex = latex.replace(redBar, "")
+                    latex = latex.substring(0,position) + redBar + latex.substring(position)
+                    positionInRelative -= 1
+                }
+            }
+            // if not the last part of symbol just move left
+            else{
+                position -= relativePosition[positionInRelative-1].code -48
+                latex = latex.replace(redBar, "")
+                latex = latex.substring(0,position) + redBar + latex.substring(position)
+                positionInRelative -= 1
+            }
+        }
+        else{
+            position -= relativePosition[positionInRelative-1].code -48
+            latex = latex.replace(redBar, "")
+            latex = latex.substring(0,position) + redBar + latex.substring(position+(relativePosition[positionInRelative-1].code -48))
+            relativePosition = relativePosition.substring(0,positionInRelative-1) + relativePosition.substring(positionInRelative).drop(0)
+            positionInRelative -= 1
+        }
+    }
+    result(position, relativePosition, positionInRelative, latex)
 }

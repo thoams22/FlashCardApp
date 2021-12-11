@@ -7,8 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.flashcard.Action
-import com.example.flashcard.constants.FOLDER_LIST_ARGUMENT_KEY
-import com.example.flashcard.constants.FOLDER_LIST_SCREEN
+import com.example.flashcard.Constants.FOLDER_LIST_ARGUMENT_KEY
+import com.example.flashcard.Constants.FOLDER_LIST_SCREEN
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.toAction
 import com.example.flashcard.screens.folderList.FolderListScreen

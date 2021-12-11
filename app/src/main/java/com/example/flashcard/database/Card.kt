@@ -13,5 +13,7 @@ data class Card (
     val question: String,
     @ColumnInfo(name="reponse")
     val reponse: String,
-    val folderId: Int
+    val folderId: Int,
+    val questionRelativePosition: String,
+    val reponseRelativePosition: String
 )

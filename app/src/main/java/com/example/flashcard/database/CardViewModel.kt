@@ -1,18 +1,16 @@
 package com.example.flashcard.database
 
-import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flashcard.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,14 +24,19 @@ class CardViewModel @Inject constructor(
     val question: MutableState<String> = mutableStateOf("")
     val reponse: MutableState<String> = mutableStateOf("")
     val folderid: MutableState<Int> = mutableStateOf(0)
+    val reponseRelativePosition: MutableState<String> = mutableStateOf("")
+    val questionRelativePosition: MutableState<String> = mutableStateOf("")
+
+    val latexR: MutableState<String> = mutableStateOf("")
 
     val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
     val searchTextState: MutableState<String> = mutableStateOf("")
     val preReponse: MutableState<String> = mutableStateOf("")
+    val preReponseRelativePosition: MutableState<String> = mutableStateOf("")
     val ContentState: MutableState<ContentState> = mutableStateOf(com.example.flashcard.ContentState.CLOSED)
     val KeyboardState: MutableState<KeyboardState> = mutableStateOf(com.example.flashcard.KeyboardState.DEFAULT)
-    var cardList: MutableList<Card> = mutableListOf(Card(-1, "", "", -1))
-
+    var cardList: MutableList<Card> = mutableListOf(Card(-1, "", "", -1, "", ""))
+    var revisionState: MutableState<RevisionState> = mutableStateOf(RevisionState.QUESTION)
 
     private val  _searchCards = MutableStateFlow<RequestState<List<Card>>>(RequestState.Idle)
     val searchCards: StateFlow<RequestState<List<Card>>> = _searchCards
@@ -69,7 +72,9 @@ class CardViewModel @Inject constructor(
             val card = Card(
                 question = question.value,
                 reponse = reponse.value,
-                folderId = folderid.value
+                folderId = folderid.value,
+                reponseRelativePosition = reponseRelativePosition.value,
+                questionRelativePosition = questionRelativePosition.value
             )
             repository.insertCard(card = card)
         }
@@ -82,7 +87,9 @@ class CardViewModel @Inject constructor(
                 cardId = id.value,
                 question = question.value,
                 reponse = reponse.value ,
-                folderId = folderid.value
+                folderId = folderid.value,
+                reponseRelativePosition = reponseRelativePosition.value,
+                questionRelativePosition = questionRelativePosition.value
             )
             repository.updateCard(card = card)
         }
@@ -94,7 +101,9 @@ class CardViewModel @Inject constructor(
                 cardId = id.value,
                 question = question.value,
                 reponse = reponse.value,
-                folderId = folderid.value
+                folderId = folderid.value,
+                reponseRelativePosition = reponseRelativePosition.value,
+                questionRelativePosition = questionRelativePosition.value
             )
             repository.deleteCard(card = card)
         }
@@ -106,7 +115,9 @@ class CardViewModel @Inject constructor(
                 cardId = card.cardId,
                 question = card.question,
                 reponse = card.reponse,
-                folderId = card.folderId
+                folderId = card.folderId,
+                questionRelativePosition = questionRelativePosition.value,
+                reponseRelativePosition = reponseRelativePosition.value
             )
             repository.deleteCard(card = carde)
         }
@@ -147,11 +158,15 @@ class CardViewModel @Inject constructor(
             question.value = selectedCard.question
             reponse.value = selectedCard.reponse
             folderid.value = selectedCard.folderId
+            reponseRelativePosition.value = selectedCard.reponseRelativePosition
+            questionRelativePosition.value = selectedCard.questionRelativePosition
         }else{
             id.value = 0
             reponse.value = ""
             question.value = ""
             folderid.value = selectedFolderId
+            reponseRelativePosition.value = ""
+            questionRelativePosition.value = ""
         }
     }
     fun validateFields(): Boolean{
@@ -286,7 +301,7 @@ class CardViewModel @Inject constructor(
     val getFolderWithCards: StateFlow<RequestState<List<FolderWithCards>>> = _getFolderWithCards
 
     fun getFolderWithCards(folderId: Int){
-        //_getFolderWithCards.value = RequestState.Loading
+        _getFolderWithCards.value = RequestState.Loading
         try {
             viewModelScope.launch{
                 repository.getFolderWithCards(folderId = folderId).collect { _getFolderWithCards.value = RequestState.Success(it) }
