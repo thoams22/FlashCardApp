@@ -26,33 +26,36 @@ import com.wakaztahir.composejlatex.latexImageBitmap
 
 const val divider = 11.0
 const val dividerAction = 8
-const val height = 45
 const val heightSpaceBar = 25
+const val divHeight = 15
 
 @Composable
 fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(modifier = Modifier.fillMaxWidth(),
             content = {
                 Row(content = {
                     TextButton(onClick = { onKeyPressed("_{}^{}", "231") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start)
+                        Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                     TextButton(onClick = { onKeyPressed("^{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start)
+                        Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                     TextButton(onClick = { onKeyPressed("_{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start)
+                        Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                     TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                     TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                 }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -81,7 +84,7 @@ fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:St
                     ButtonCustom("m", onKeyPressed = onKeyPressed)
                 }, horizontalArrangement = Arrangement.SpaceEvenly)
                 Row(content = {
-                    TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULTMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    TextButton(onClick = { cardViewModel.keyboardState.value = DEFAULTMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                         Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = null)
                     }
                     ButtonCustom("w", onKeyPressed = onKeyPressed)
@@ -96,13 +99,13 @@ fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:St
                     }
                 }, horizontalArrangement = Arrangement.SpaceEvenly)
                 Row(content = {
-                    TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                    TextButton(onClick = { cardViewModel.keyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                     }
                     ButtonCustom(",", onKeyPressed = onKeyPressed)
-                    TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                    TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                        Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                             , contentDescription = null)
                     }
                     OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -121,27 +124,30 @@ fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:St
 @Composable
 fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(modifier = Modifier.fillMaxWidth(),
         content = {
             Row(content = {
                 TextButton(onClick = { onKeyPressed("_{}^{}", "231") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onKeyPressed("^{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onKeyPressed("_{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -159,8 +165,8 @@ fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
                 ButtonCustom("\\AE ", onKeyPressed = onKeyPressed)
-                ButtonCustom("#", onKeyPressed = onKeyPressed)
-                ButtonCustom("€", onKeyPressed = onKeyPressed)
+                ButtonCustom("# ", onKeyPressed = onKeyPressed)
+                ButtonCustom("€ ", onKeyPressed = onKeyPressed)
                 ButtonCustom("_ ", onKeyPressed = onKeyPressed)
                 ButtonCustom(" ", onKeyPressed = onKeyPressed)
                 ButtonCustom("-", onKeyPressed = onKeyPressed)
@@ -170,8 +176,9 @@ fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
                 ButtonCustom("/ ", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATHMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = null)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATHMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{=<>}\$", alignment = LatexAlignment.Start, color = textColor)
+                        , contentDescription = null)
                 }
                 ButtonCustom("*", onKeyPressed = onKeyPressed)
                 ButtonCustom("\"", onKeyPressed = onKeyPressed, taille = "1")
@@ -185,13 +192,13 @@ fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom(",", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -210,27 +217,30 @@ fun ChiffreKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
 @Composable
 fun MathMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(modifier = Modifier.fillMaxWidth(),
         content = {
             Row(content = {
                 TextButton(onClick = { onKeyPressed("_{}^{}", "231") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}_{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onKeyPressed("^{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square^{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onKeyPressed("_{}", "21") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\square_{n}", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 5).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -259,8 +269,8 @@ fun MathMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
                 ButtonCustom("\\perp ", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom("%", onKeyPressed = onKeyPressed)
@@ -275,13 +285,13 @@ fun MathMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom("<", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -299,15 +309,18 @@ fun MathMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, ta
 @Composable
 fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String) -> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(
         content = {
             Row(content = {
             TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                     , contentDescription = null)
             }
             TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                     , contentDescription = null)
             }
         }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -321,10 +334,10 @@ fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taill
                 ButtonCustom("\\simeq ", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\sim ", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\neq ", onKeyPressed = onKeyPressed)
-                ButtonCustom("\\rightarrow ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\to ", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                ButtonCustom("\\leftarrow ", onKeyPressed = onKeyPressed)
+                ButtonCustom("\\gets ", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\partial ", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\nabla ", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\infty ", onKeyPressed = onKeyPressed)
@@ -336,8 +349,8 @@ fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taill
                 ButtonCustom("\\arcsin ", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\alpha}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\alpha}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom("\\arccos ", onKeyPressed = onKeyPressed)
@@ -352,13 +365,13 @@ fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taill
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom(",", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = DEFAULT }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{ABC}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2")}) {
@@ -376,15 +389,18 @@ fun MathKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taill
 @Composable
 fun GreekMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String) -> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(
         content = {
             Row(content = {
                 TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -413,7 +429,7 @@ fun GreekMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, t
                 ButtonCustom("\\Upsilon", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                Button(onClick = { cardViewModel.KeyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                Button(onClick = { cardViewModel.keyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = null)
                 }
                 ButtonCustom("\\Phi", onKeyPressed = onKeyPressed)
@@ -423,18 +439,18 @@ fun GreekMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, t
                 ButtonCustom("\\exists", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\nexists", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\forall", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { /*TODO*/ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { onPositionChanged("DELETE") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = GREEK }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom(",", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -452,15 +468,18 @@ fun GreekMajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, t
 @Composable
 fun GreekKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String) -> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(
         content = {
             Row(content = {
                 TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -489,7 +508,7 @@ fun GreekKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, tail
                 ButtonCustom("\\upsilon", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = GREEKMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { cardViewModel.keyboardState.value = GREEKMAJ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Outlined.ArrowUpward, contentDescription = null)
                 }
                 ButtonCustom("\\phi", onKeyPressed = onKeyPressed)
@@ -499,18 +518,18 @@ fun GreekKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, tail
                 ButtonCustom("\\in", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\notin", onKeyPressed = onKeyPressed)
                 ButtonCustom("\\ni", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { /*TODO*/ }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { onPositionChanged("DELETE")}, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom(",", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -528,15 +547,18 @@ fun GreekKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, tail
 @Composable
 fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String) -> Unit, onPositionChanged:(String)->Unit) {
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
+    val textColor = MaterialTheme.colors.onSurface
+
     Column(
         content = {
             Row(content = {
                 TextButton(onClick = { onPositionChanged("LEFT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\leftarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 TextButton(onClick = { onPositionChanged("RIGHT") }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / 2).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start)
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\rightarrow}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
@@ -565,7 +587,7 @@ fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille
                 ButtonCustom("M", onKeyPressed = onKeyPressed)
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                Button(onClick = { cardViewModel.KeyboardState.value = DEFAULT},Modifier.size(width = (LocalConfiguration.current.screenWidthDp/ dividerAction).dp, height = height.dp)) {
+                Button(onClick = { cardViewModel.keyboardState.value = DEFAULT},Modifier.size(width = (LocalConfiguration.current.screenWidthDp/ dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Filled.ArrowUpward, contentDescription = null)
                 }
                 ButtonCustom("W", onKeyPressed = onKeyPressed)
@@ -575,18 +597,18 @@ fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille
                 ButtonCustom("B", onKeyPressed = onKeyPressed)
                 ButtonCustom("N", onKeyPressed = onKeyPressed)
                 ButtonCustom("?", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { /*TODO*/ },Modifier.size(width = (LocalConfiguration.current.screenWidthDp/ dividerAction).dp, height = height.dp)) {
+                TextButton(onClick = { onPositionChanged("DELETE") },Modifier.size(width = (LocalConfiguration.current.screenWidthDp/ dividerAction).dp, height = height.dp)) {
                     Icon(imageVector = Icons.Outlined.Backspace, contentDescription = null)
                 }
             }, horizontalArrangement = Arrangement.SpaceEvenly)
             Row(content = {
-                TextButton(onClick = { cardViewModel.KeyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = CHIFFRE }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{123}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 ButtonCustom(",", onKeyPressed = onKeyPressed)
-                TextButton(onClick = { cardViewModel.KeyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
-                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start)
+                TextButton(onClick = { cardViewModel.keyboardState.value = MATH }, modifier = Modifier.size(width = (LocalConfiguration.current.screenWidthDp / dividerAction).dp, height = height.dp)) {
+                    Image(bitmap = latexImageBitmap(context, "\\Large\$\\mathbf{\\Sigma}\$", alignment = LatexAlignment.Start, color = textColor)
                         , contentDescription = null)
                 }
                 OutlinedButton(onClick = { onKeyPressed("\\ ", "2") }) {
@@ -602,21 +624,22 @@ fun MajKeyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille
 }
 
 @Composable
-fun ButtonCustom(latex:String, keysend:String = latex, div:Double = divider, onKeyPressed: (text:String, taille:String)->Unit, taille:String = latex.length.toString(), heigt: Int = height) {
+fun ButtonCustom(latex:String, keysend:String = latex, div:Double = divider, onKeyPressed: (text:String, taille:String)->Unit, taille:String = latex.length.toString()) {
     val width = LocalConfiguration.current.screenWidthDp / div
     val context = LocalContext.current
+    val height = LocalConfiguration.current.screenHeightDp / divHeight
     val textColor = MaterialTheme.colors.onSurface
     val imageBitmap by remember {
         mutableStateOf(latexImageBitmap(context, latex, alignment = LatexAlignment.Start, color = textColor))
     }
-    TextButton(onClick = { onKeyPressed(keysend, taille)}, modifier = Modifier.size(width = width.dp, height = heigt.dp)) {
+    TextButton(onClick = { onKeyPressed(keysend, taille)}, modifier = Modifier.size(width = width.dp, height = height.dp)) {
         Image(bitmap = imageBitmap, contentDescription = null)
     }
 }
 
 @Composable
 fun KeyboardAffiched(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)->Unit, onActionPress: (String)-> Unit){
-    when (cardViewModel.KeyboardState.value){
+    when (cardViewModel.keyboardState.value){
         DEFAULT -> {
             Keyboard(cardViewModel, onKeyPressed, onActionPress)
         }
@@ -641,7 +664,7 @@ fun KeyboardAffiched(cardViewModel: CardViewModel, onKeyPressed: (text:String, t
     }
 }
 
-fun HandleAction(action:String, pos:Int, relPos:String, positionInRel:Int, lat: String, result:(pos:Int, relPos:String, posInRel:Int, lat:String)->Unit){
+fun handleAction(action:String, pos:Int, relPos:String, positionInRel:Int, lat: String, result:(pos:Int, relPos:String, posInRel:Int, lat:String)->Unit){
     var position = pos
     var relativePosition = relPos
     var positionInRelative = positionInRel

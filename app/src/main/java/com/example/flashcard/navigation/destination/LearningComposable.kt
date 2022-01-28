@@ -7,8 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.flashcard.Action
-import com.example.flashcard.ContentState
 import com.example.flashcard.Constants
+import com.example.flashcard.ContentState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.screens.learning.LearningScreen
 
@@ -26,7 +26,7 @@ fun NavGraphBuilder.learningComposable(
         cardViewModel.getSelectedFolder(folderId = folderId)
         val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
-        cardViewModel.ContentState.value = ContentState.ANSWERING
+        cardViewModel.contentState.value = ContentState.ANSWERING
         LearningScreen(selectedFolder = selectedFolder,
             navigateToListScreen = navigateToListScreen,
             cardViewModel = cardViewModel,

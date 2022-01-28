@@ -1,6 +1,5 @@
 package com.example.flashcard.database
 
-import android.util.Log
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -8,7 +7,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
 
-    val readAllCard: Flow<List<Card>> = cardDao.readAllCard()
+    //val readAllCard: Flow<List<Card>> = cardDao.readAllCard() USE TO SEE IF CARD ARE DELETED WITH FOLDER
 
      fun getSelectedCard(cardId: Int): Flow<Card>{
         return cardDao.getSelectedCard(cardId)
@@ -55,5 +54,4 @@ class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
 
     fun getFolderWithCards(folderId: Int): Flow<List<FolderWithCards>>{
         return cardDao.getFolderWithCards(folderId)}
-
 }

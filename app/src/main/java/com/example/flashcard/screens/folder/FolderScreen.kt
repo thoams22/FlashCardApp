@@ -24,7 +24,7 @@ fun FolderScreen(
         cardViewModel.ancientFolderId.value = selectedFolder.folderId
     }
     val context = LocalContext.current
-    cardViewModel.KeyboardState.value = KeyboardState.DEFAULT
+    cardViewModel.keyboardState.value = KeyboardState.DEFAULT
 
     Scaffold(
         topBar = {

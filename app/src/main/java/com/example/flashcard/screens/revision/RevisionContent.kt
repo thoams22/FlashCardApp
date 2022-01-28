@@ -144,7 +144,7 @@ fun AnsweringContent(cards: MutableList<Card>,
                             .padding(horizontal = 16.dp)
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colors.background)
+                            .background(Color.LightGray)
                     ) {
                         Icon(
                             imageVector = Icons.Default.RestartAlt,
@@ -155,14 +155,13 @@ fun AnsweringContent(cards: MutableList<Card>,
                     }
                     IconButton(
                         onClick = {
-                            cardViewModel.cardList = cardNbr
-                            navigateToListScreen(Action.NO_ACTION, selectedFolder!!.folderId)
+                                navigateToListScreen(Action.NO_ACTION, selectedFolder!!.folderId)
                         },
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colors.background)
+                            .background(Color.LightGray)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowForward,

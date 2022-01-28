@@ -27,7 +27,7 @@ fun NavGraphBuilder.revisionComposable(
         cardViewModel.getSelectedFolder(folderId = folderId)
         val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
-        cardViewModel.ContentState.value = ContentState.ANSWERING
+        cardViewModel.contentState.value = ContentState.ANSWERING
         RevisionScreen(
             selectedFolder = selectedFolder,
             navigateToListScreen = navigateToListScreen,

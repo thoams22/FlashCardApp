@@ -19,10 +19,10 @@ fun LearningScreen(
 ){
     LaunchedEffect(key1 = true){
         cardViewModel.getFolderWithCards(selectedFolder!!.folderId)
-        cardViewModel.ContentState.value = ContentState.ANSWERING
+        cardViewModel.contentState.value = ContentState.ANSWERING
     }
     val folderWithCard by cardViewModel.getFolderWithCards.collectAsState()
-    val contentState: ContentState by cardViewModel.ContentState
+    val contentState: ContentState by cardViewModel.contentState
 
         Scaffold(
             topBar = { LearningAppBar(

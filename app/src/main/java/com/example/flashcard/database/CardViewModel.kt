@@ -27,14 +27,12 @@ class CardViewModel @Inject constructor(
     val reponseRelativePosition: MutableState<String> = mutableStateOf("")
     val questionRelativePosition: MutableState<String> = mutableStateOf("")
 
-    val latexR: MutableState<String> = mutableStateOf("")
-
     val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
     val searchTextState: MutableState<String> = mutableStateOf("")
-    val preReponse: MutableState<String> = mutableStateOf("")
+    val preReponse: MutableState<String> = mutableStateOf(" ")
     val preReponseRelativePosition: MutableState<String> = mutableStateOf("")
-    val ContentState: MutableState<ContentState> = mutableStateOf(com.example.flashcard.ContentState.CLOSED)
-    val KeyboardState: MutableState<KeyboardState> = mutableStateOf(com.example.flashcard.KeyboardState.DEFAULT)
+    val contentState: MutableState<ContentState> = mutableStateOf(ContentState.CLOSED)
+    val keyboardState: MutableState<KeyboardState> = mutableStateOf(KeyboardState.DEFAULT)
     var cardList: MutableList<Card> = mutableListOf(Card(-1, "", "", -1, "", ""))
     var revisionState: MutableState<RevisionState> = mutableStateOf(RevisionState.QUESTION)
 
@@ -68,7 +66,7 @@ class CardViewModel @Inject constructor(
     }
 
     private fun insertCard(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val card = Card(
                 question = question.value,
                 reponse = reponse.value,
@@ -232,7 +230,6 @@ class CardViewModel @Inject constructor(
     private val _selectedFolder: MutableStateFlow<Folder?> = MutableStateFlow(null)
     val selectedFolder: StateFlow<Folder?> = _selectedFolder
 
-
     fun getSelectedFolder(folderId: Int?){
         viewModelScope.launch{
             repository.getSelectedFolder(folderId = folderId).collect {
@@ -252,15 +249,16 @@ class CardViewModel @Inject constructor(
     }
 
     private fun deleteFolder(){
-        getFolderWithCards(folderid.value)
-        val cardList = getFolderWithCards.value
-        deleteSelectedFolder(cardList)
+        if(getFolderWithCards.value !is RequestState.Loading && getFolderWithCards.value !is RequestState.Success){
+            getFolderWithCards(folderId = folderid.value)
+        }
+        deleteSelectedFolder(getFolderWithCards.value)
     }
 
-    private fun deleteSelectedFolder(card: RequestState<List<FolderWithCards>>){
-        if (card is RequestState.Success && card.data.isNotEmpty()){
-            card.data.first().cards.forEach{ car ->
-                deleteCard(car)
+    private fun deleteSelectedFolder(folderWithcards: RequestState<List<FolderWithCards>>){
+        if (folderWithcards is RequestState.Success && folderWithcards.data.isNotEmpty()){
+            folderWithcards.data.first().cards.forEach{ card ->
+                deleteCard(card)
             }
             viewModelScope.launch(Dispatchers.IO){
                 val folder  =Folder(
@@ -270,8 +268,8 @@ class CardViewModel @Inject constructor(
                 )
                 repository.deleteFolder(folder = folder)
             }
+            _getFolderWithCards.value = RequestState.Idle
         }
-        getFolderWithCards(folderid.value)
     }
 
     private fun updateSelectedFolder(card: RequestState<List<FolderWithCards>>){
@@ -289,7 +287,8 @@ class CardViewModel @Inject constructor(
             repository.updateFolder(folder = folder)
         }
         getFolderWithCards(folderid.value)
-    }}
+    }
+    }
 
     private fun updateSelectedFolder(){
         getFolderWithCards(ancientFolderId.value)
@@ -298,7 +297,7 @@ class CardViewModel @Inject constructor(
     }
 
     private val  _getFolderWithCards = MutableStateFlow<RequestState<List<FolderWithCards>>>(RequestState.Idle)
-    val getFolderWithCards: StateFlow<RequestState<List<FolderWithCards>>> = _getFolderWithCards
+    var getFolderWithCards: StateFlow<RequestState<List<FolderWithCards>>> = _getFolderWithCards
 
     fun getFolderWithCards(folderId: Int){
         _getFolderWithCards.value = RequestState.Loading
@@ -310,5 +309,4 @@ class CardViewModel @Inject constructor(
             _getFolderWithCards.value = RequestState.Error(e)
         }
     }
-
 }

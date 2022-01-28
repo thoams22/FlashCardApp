@@ -46,20 +46,21 @@ fun ListContent(
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedCards is RequestState.Success){
-
             HandleListContentSearched(folder= folder, cards = searchedCards.data, onModifyClicked = navigateToTaskScreen, onDeleteClicked = onSwipeToDelete)
         }
     }else{
-        if (cards is RequestState.Success && cards.data.isNotEmpty()){
+        if (cards is RequestState.Success){
+            if(cards.data.isNotEmpty()){
                 HandleListContent(
                     folder = folder,
                     cards = cards.data,
                     onModifyClicked = navigateToTaskScreen,
                     onDeleteClicked = onSwipeToDelete
-                )
-        }else{
+                )}
+        else{
                 EmptyContent()
             }
+        }
     }
 }
 

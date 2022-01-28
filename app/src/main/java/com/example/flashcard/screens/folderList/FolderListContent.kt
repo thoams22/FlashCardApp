@@ -1,6 +1,7 @@
 
 package com.example.flashcard.screens.folderList
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -18,13 +19,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.flashcard.Action
 import com.example.flashcard.RequestState
 import com.example.flashcard.SearchAppBarState
+import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 import com.example.flashcard.screens.list.EmptyContent
 import com.wakaztahir.composejlatex.LatexAlignment
@@ -38,8 +45,9 @@ fun FolderListContent(
     searchedFolders: RequestState<List<Folder>>,
     searchAppBarState: SearchAppBarState,
     navigateToListScreen: (action: Action, Int) -> Unit,
-    onDeleteClicked: (Action, Folder)->Unit,
-    onModifyClicked: (Int) -> Unit
+    onDeleteClicked: (Action)->Unit,
+    onModifyClicked: (Int) -> Unit,
+    cardViewModel: CardViewModel
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedFolders is RequestState.Success){
@@ -47,7 +55,8 @@ fun FolderListContent(
                 folders = searchedFolders.data,
                 navigateToListScreen = navigateToListScreen,
                 onDeleteClicked = onDeleteClicked,
-                onModifyClicked = onModifyClicked
+                onModifyClicked = onModifyClicked,
+                cardViewModel = cardViewModel
             )
         }
     }else{
@@ -56,7 +65,8 @@ fun FolderListContent(
                 folders = folders.data,
                 navigateToListScreen = navigateToListScreen,
                 onDeleteClicked = onDeleteClicked,
-                onModifyClicked = onModifyClicked
+                onModifyClicked = onModifyClicked,
+                cardViewModel = cardViewModel
             )
         }
     }
@@ -66,9 +76,10 @@ fun FolderListContent(
 @Composable
 fun HandleListContent(
     folders: List<Folder>,
-    onDeleteClicked: (Action, Folder)->Unit,
+    onDeleteClicked: (Action)->Unit,
     navigateToListScreen: (action: Action, Int) -> Unit,
-    onModifyClicked: (Int) -> Unit
+    onModifyClicked: (Int) -> Unit,
+    cardViewModel: CardViewModel
 ){
     if(folders.isEmpty()){
         EmptyContent()
@@ -77,7 +88,8 @@ fun HandleListContent(
             folders = folders,
             navigateToListScreen = navigateToListScreen,
             onDeleteClicked = onDeleteClicked,
-            onModifyClicked = onModifyClicked
+            onModifyClicked = onModifyClicked,
+            cardViewModel = cardViewModel
 
         )
     }
@@ -88,8 +100,9 @@ fun HandleListContent(
 fun DisplayFolder(
     folders: List<Folder>,
     navigateToListScreen: (Action, Int) -> Unit,
-    onDeleteClicked: (Action, Folder) -> Unit,
-    onModifyClicked: (Int)->Unit
+    onDeleteClicked: (Action) -> Unit,
+    onModifyClicked: (Int)->Unit,
+    cardViewModel: CardViewModel
 ){
     val textColor = MaterialTheme.colors.onSurface
     LazyColumn{
@@ -126,15 +139,46 @@ fun DisplayFolder(
                     .fillMaxHeight(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically) {
+                    var openDialog by remember {
+                        mutableStateOf(false)
+                    }
                     IconButton(
                         onClick = {
-                                  onDeleteClicked(Action.DELETE_FOLDER,folder)
+                            cardViewModel.getFolderWithCards(folder.folderId)
+                            openDialog = true
                         },
                         modifier = Modifier
                             .size(30.dp)
                             .clip(CircleShape)
                             .background(Color.LightGray)
                     ) {
+                        if(openDialog){
+                            Dialog(onDismissRequest = { openDialog = false },
+                                properties = DialogProperties(dismissOnClickOutside = true),
+                                content = {
+                                    Surface(modifier = Modifier.widthIn(180.dp).heightIn(180.dp), shape = RectangleShape, border = BorderStroke(1.dp, Color.LightGray)) {
+                                        Column(modifier = Modifier.fillMaxWidth()){
+                                            Text(modifier = Modifier.padding(10.dp), fontSize = 30.sp, text = "DELETE ?", textAlign = TextAlign.Left)
+                                            Text(
+                                                modifier = Modifier.padding(10.dp),
+                                                text = "Are ou sure you want to delete this folder"
+                                            )
+                                            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                                                OutlinedButton(modifier = Modifier.padding(10.dp),onClick = { openDialog = false }) {
+                                                    Text(text = "Cancel")
+                                                }
+                                                Button(modifier = Modifier.padding(10.dp),onClick = {
+                                                    onDeleteClicked(Action.DELETE_FOLDER)
+                                                    openDialog = false}
+                                                ) {
+                                                    Text(text = "Delete")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            )
+                        }
                         Icon(
                             imageVector = Icons.Default.DeleteOutline,
                             tint = Color.Red,

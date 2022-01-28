@@ -39,19 +39,17 @@ fun NavGraphBuilder.listComposable(
         cardViewModel.getSelectedFolder(folderId)
         val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
-        LaunchedEffect(key1 = action, key2 = folderId){
+        LaunchedEffect(selectedFolder){
             cardViewModel.action.value = action
             cardViewModel.getSelectedFolder(folderId=folderId)
             cardViewModel.updateSelectedFolder(selectedFolder)
         }
-
-        ListScreen(
-            navigateToTaskScreen = navigateToTaskScreen,
-            cardViewModel = cardViewModel,
-            navigateToFolderListScreen = navigateToFolderListScreen,
-            selectedFolder = selectedFolder,
-            navigateToLearningScreen= navigateToLearningScreen,
-            navigateToRevisionScreen = navigateToRevisionScreen
-        )
+        selectedFolder?.let { ListScreen(
+            navigateToTaskScreen,
+            cardViewModel,
+            navigateToFolderListScreen, it,
+            navigateToLearningScreen,
+            navigateToRevisionScreen
+        ) }
     }
 }

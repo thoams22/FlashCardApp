@@ -16,12 +16,14 @@ import com.example.flashcard.database.Folder
 @Composable
 fun RevisionScreen(
     selectedFolder: Folder?,
-navigateToListScreen: (Action, Int)->Unit,
-cardViewModel: CardViewModel,
-navigateToRevisionScreen: (Int) -> Unit) {
+    navigateToListScreen: (Action, Int) -> Unit,
+    cardViewModel: CardViewModel,
+    navigateToRevisionScreen: (Int) -> Unit
+) {
+
     LaunchedEffect(key1 = true){
         cardViewModel.getFolderWithCards(selectedFolder!!.folderId)
-        cardViewModel.ContentState.value = ContentState.ANSWERING
+        cardViewModel.contentState.value = ContentState.ANSWERING
     }
     val folderWithCards by cardViewModel.getFolderWithCards.collectAsState()
     val revisionState: RevisionState by cardViewModel.revisionState

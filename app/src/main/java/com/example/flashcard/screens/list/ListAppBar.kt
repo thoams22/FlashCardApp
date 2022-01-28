@@ -177,8 +177,10 @@ fun SearchAppBar(
 }
 
 @Composable
-fun BackAction(onBackClicked: (Action)-> Unit){
-    IconButton(onClick = {onBackClicked(Action.NO_ACTION)}) {
+fun BackAction(onBackClicked: (Action) -> Unit){
+    IconButton(onClick = {
+        onBackClicked(Action.NO_ACTION)
+    }) {
         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back_icon))
     }
 }

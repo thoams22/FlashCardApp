@@ -14,17 +14,17 @@ import com.example.flashcard.navigation.SetupNavigation
 import com.example.flashcard.ui.theme.FlashCardTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalFoundationApi
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
-    @ExperimentalFoundationApi
-    @ExperimentalComposeUiApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val cardViewModel = ViewModelProvider(this).get(CardViewModel::class.java)
         setContent {
-            FlashCardTheme(darkTheme = true) {
+            FlashCardTheme {
                 navController = rememberNavController()
                 SetupNavigation(navController = navController,cardviewModel = cardViewModel)
             }

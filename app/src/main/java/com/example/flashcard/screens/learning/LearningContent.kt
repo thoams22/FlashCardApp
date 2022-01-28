@@ -42,6 +42,7 @@ fun LearningContent(
 ){
     var notKnow by remember { mutableStateOf(0)}
     if (folderWithCard is RequestState.Success && folderWithCard.data.isNotEmpty()){
+
     if (cardViewModel.cardList.isNotEmpty() && cardViewModel.cardList.first().cardId == -1){
         cardViewModel.cardList = folderWithCard.data.first().cards.toMutableList()
     }
@@ -73,7 +74,13 @@ fun LearningContent(
         }
     }
     }else{
-        RecapContent(navigateToListScreen = navigateToListScreen, navigateToLearningScreen = navigateToLearningScreen, selectedFolder = selectedFolder, notKnow = notKnow)
+        RecapContent(
+            navigateToListScreen = navigateToListScreen,
+            navigateToLearningScreen = navigateToLearningScreen,
+            selectedFolder = selectedFolder,
+            notKnow = notKnow,
+            cardViewModel = cardViewModel
+        )
     }
 }
 }
@@ -85,16 +92,8 @@ fun HandleContent(cards: MutableList<Card>,
                   onPreResponseChange: (String, String) -> Unit,
                   cardViewModel: CardViewModel){
     if (cards.isNotEmpty()){
-        var card: Card
-        if(cardViewModel.selectedCard.value == null){
-            card = cards.random()
-            cardViewModel.getSelectedCard(card.cardId)
-        }else{
-            card = cardViewModel.selectedCard.value!!
-            if(card !in cards){
-                card = cards.random()
-            }
-        }
+        val card = cards.random()
+        cardViewModel.getSelectedCard(card.cardId)
         AnsweringContent(
         card = card,
         PreResponse = PreResponse,
@@ -149,7 +148,7 @@ fun AnsweringContent(
                 contentDescription = null
             )
         }
-        Button(onClick = { cardViewModel.ContentState.value = ContentState.ISKNOW} ,modifier = Modifier
+        Button(onClick = { cardViewModel.contentState.value = ContentState.ISKNOW} ,modifier = Modifier
             .align(Alignment.End)
             .padding(vertical = 16.dp)) {
             Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = null)
@@ -172,7 +171,7 @@ fun AnsweringContent(
         onPreResponseChange(latexR.replace(redBar, ""), relativePositionR)},
 
         onActionPress = {action:String->
-        HandleAction(action = action, pos = positionR, relPos = relativePositionR, positionInRel = positionInRelativeR, lat = latexR,
+        handleAction(action = action, pos = positionR, relPos = relativePositionR, positionInRel = positionInRelativeR, lat = latexR,
         result = {pos, relPos, posInRel, lat ->
             positionR=pos
             relativePositionR = relPos
@@ -285,34 +284,42 @@ fun IsKnowContent(
 }
 
 fun onClickIsKnow(cardViewModel: CardViewModel, card: Card){
-    cardViewModel.ContentState.value = ContentState.ANSWERING
+    cardViewModel.contentState.value = ContentState.ANSWERING
     cardViewModel.getSelectedCard(-1)
     cardViewModel.preReponse.value = ""
     cardViewModel.cardList.remove(card)
 }
 fun onClickIsNotKnow(cardViewModel: CardViewModel, notKnow:Int, onNotKnow:(Int)->Unit){
-    cardViewModel.ContentState.value = ContentState.ANSWERING
+    cardViewModel.contentState.value = ContentState.ANSWERING
     cardViewModel.getSelectedCard(-1)
     cardViewModel.preReponse.value = ""
     onNotKnow(notKnow+1)
 }
 
 @Composable
-fun RecapContent(navigateToListScreen: (Action, Int) -> Unit, navigateToLearningScreen: (Int)->Unit, selectedFolder: Folder?, notKnow: Int){
+fun RecapContent(
+    navigateToListScreen: (Action, Int) -> Unit,
+    navigateToLearningScreen: (Int) -> Unit,
+    selectedFolder: Folder?,
+    notKnow: Int,
+    cardViewModel: CardViewModel
+){
     Column(modifier= Modifier.fillMaxSize(), Arrangement.SpaceAround) {
         Text(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp) ,text = "You have been Wrong to $notKnow", textAlign = TextAlign.Center)
-        Row(modifier = Modifier.fillMaxWidth(), content = {
+        Row(horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(), content = {
             IconButton(
                     onClick = {
+                        cardViewModel.cardList = mutableListOf(Card(-1, "", "", -1, "", ""))
                         navigateToLearningScreen(selectedFolder!!.folderId)
                     },
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .size(60.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colors.background)
+                .background(Color.LightGray)
             ) {
             Icon(
                 imageVector = Icons.Default.RestartAlt,
@@ -323,13 +330,14 @@ fun RecapContent(navigateToListScreen: (Action, Int) -> Unit, navigateToLearning
         }
             IconButton(
                 onClick = {
+                    cardViewModel.cardList = mutableListOf(Card(-1, "", "", -1, "", ""))
                     navigateToListScreen(Action.NO_ACTION, selectedFolder!!.folderId)
                 },
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .size(60.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colors.background)
+                    .background(Color.LightGray)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForward,

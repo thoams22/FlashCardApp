@@ -50,12 +50,11 @@ fun FolderListScreen(
         navigateToListScreen = navigateToListScreen,
         searchedFolders = searchedFolder,
         searchAppBarState = searchAppBarState,
-        onDeleteClicked = { action, folder ->
-            cardViewModel.getSelectedFolder(folder.folderId)
+        onDeleteClicked = { action ->
             cardViewModel.action.value = action
-
         },
-        onModifyClicked = navigateToFolderScreen
+        onModifyClicked = navigateToFolderScreen,
+        cardViewModel = cardViewModel
     )
 }
 )

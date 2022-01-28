@@ -13,7 +13,6 @@ import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.toAction
 import com.example.flashcard.screens.folderList.FolderListScreen
 
-
 @ExperimentalMaterialApi
 fun NavGraphBuilder.folderlistComposable(
     navigateToListScreen: (action: Action,Int) -> Unit,

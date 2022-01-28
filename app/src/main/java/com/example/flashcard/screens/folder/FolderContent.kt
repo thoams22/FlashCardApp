@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.HandleAction
+import com.example.flashcard.handleAction
 import com.example.flashcard.KeyboardAffiched
 import com.example.flashcard.database.CardViewModel
 import com.wakaztahir.composejlatex.LatexAlignment
@@ -69,7 +69,7 @@ fun FolderContent(
             onFolderNameChange(latex.replace(redBar, ""), relativePosition)
         },
             onActionPress = { action: String ->
-                HandleAction(
+                handleAction(
                     action = action, pos = position, relPos = relativePosition, positionInRel = positionInRelative, lat = latex,
                     result = {pos, relPos, posInRel, lat ->
                         position=pos

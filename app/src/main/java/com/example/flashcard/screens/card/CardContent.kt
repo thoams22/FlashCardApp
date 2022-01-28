@@ -10,8 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.*
+import com.example.flashcard.KeyboardAffiched
 import com.example.flashcard.database.CardViewModel
+import com.example.flashcard.handleAction
 import com.example.flashcard.screens.folder.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
@@ -119,7 +120,7 @@ fun CardContent(
         },
             onActionPress = { action: String ->
                 if(focus == "Question"){
-                    HandleAction(
+                    handleAction(
                         action = action, pos = positionQ, relPos = relativePositionQ, positionInRel = positionInRelativeQ, lat = latexQ,
                         result = {pos, relPos, posInRel, lat ->
                             positionQ=pos
@@ -130,7 +131,7 @@ fun CardContent(
                     )
                 }
                 else if(focus == "Reponse"){
-                    HandleAction(
+                    handleAction(
                         action = action, pos = positionR, relPos = relativePositionR, positionInRel = positionInRelativeR, lat = latexR,
                         result = {pos, relPos, posInRel, lat ->
                             positionR=pos
@@ -154,27 +155,5 @@ fun CardContent(
             }
         onReponseChange(latexR.replace(redBar, ""), relativePositionR)
         onQuestionChange(latexQ.replace(redBar, ""), relativePositionQ)
-
     }, verticalArrangement = Arrangement.SpaceBetween)
-}
-
-@Composable
-fun KeyboardAffiched(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)->Unit, onActionPress: (String)-> Unit){
-    when (cardViewModel.KeyboardState.value){
-        KeyboardState.DEFAULT -> {
-            Keyboard(cardViewModel, onKeyPressed, onActionPress)
-        }
-        KeyboardState.MATH -> {
-            MathKeyboard(cardViewModel, onKeyPressed, onActionPress)
-        }
-        KeyboardState.GREEK -> {
-            GreekKeyboard(cardViewModel, onKeyPressed, onActionPress)
-        }
-        KeyboardState.GREEKMAJ -> {
-            GreekMajKeyboard(cardViewModel, onKeyPressed, onActionPress)
-        }
-        KeyboardState.DEFAULTMAJ ->{
-            MajKeyboard(cardViewModel, onKeyPressed, onActionPress)
-        }
-    }
 }

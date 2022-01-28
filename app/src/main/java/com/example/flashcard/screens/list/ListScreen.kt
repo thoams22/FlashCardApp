@@ -21,7 +21,6 @@ import com.example.flashcard.R
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
-import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -30,21 +29,16 @@ fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
     cardViewModel: CardViewModel,
     navigateToFolderListScreen: (Action)-> Unit,
-    selectedFolder: Folder?,
+    selectedFolder: Folder,
     navigateToLearningScreen: (Int) -> Unit,
     navigateToRevisionScreen: (Int) -> Unit
 )
 {
-
-
-    LaunchedEffect(true){
-    if (selectedFolder != null) {
-        cardViewModel.getFolderWithCards(selectedFolder.folderId)
+    LaunchedEffect(key1 = true){
         cardViewModel.getSelectedFolder(selectedFolder.folderId)
-    }
+        cardViewModel.getFolderWithCards(selectedFolder.folderId)
     }
 
-    val action by cardViewModel.action
     val folderWithCardsList by cardViewModel.getFolderWithCards.collectAsState()
     val selceF by cardViewModel.selectedFolder.collectAsState()
     val searchedCard by cardViewModel.searchCards.collectAsState()
@@ -53,13 +47,6 @@ fun ListScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    DisplaySnackBar(
-        scaffoldState = scaffoldState,
-        handleDatabaseActions = { cardViewModel.handleDatabaseAction(action = action) },
-        cardTitle = cardViewModel.question.value,
-        action = action,
-        onUndoClicked = { cardViewModel.action.value = it }
-    )
 Scaffold(
     scaffoldState = scaffoldState,
     topBar = {
@@ -82,13 +69,11 @@ Scaffold(
         onSwipeToDelete = {
             action, card ->
             cardViewModel.action.value = action
-            if (selectedFolder != null) {
-                cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder.folderId)
-            }
+            cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder.folderId)
         }
     )},
     floatingActionButton = {
-        ListFab(onLearnClicked = navigateToLearningScreen, onRevisionClicked = navigateToRevisionScreen, selectedFolder = selectedFolder?.folderId)
+        ListFab(onLearnClicked = navigateToLearningScreen, onRevisionClicked = navigateToRevisionScreen, selectedFolder = selectedFolder.folderId)
     },
     )
 }
@@ -112,7 +97,10 @@ fun ListFab(
                 Surface(modifier = Modifier.widthIn(180.dp).heightIn(180.dp), shape = RectangleShape, border = BorderStroke(1.dp, Color.LightGray)) {
                 Column(modifier = Modifier.fillMaxWidth()){
                     Text(modifier = Modifier.padding(10.dp), fontSize = 30.sp, text = "Type of learning", textAlign = TextAlign.Left)
-                Text(modifier = Modifier.padding(10.dp),text = "Revision help to familiarize with the cards\nLearning is a methods to verify that you now the cards")
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = "Revision help to familiarize with the cards\nLearning is a methods to verify that you now the cards"
+                )
                 Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                     OutlinedButton(modifier = Modifier.padding(10.dp),onClick = { onLearnClicked(selectedFolder!!) }) {
                         Text(text = "Learning")
@@ -129,41 +117,5 @@ fun ListFab(
         Icon(
             imageVector = Icons.Filled.PlayArrow,
             contentDescription = stringResource(id = R.string.play_button))
-    }
-}
-
-@Composable
-fun DisplaySnackBar(
-    scaffoldState: ScaffoldState,
-    handleDatabaseActions: ()->Unit,
-    onUndoClicked: (Action)->Unit,
-    cardTitle: String,
-    action: Action
-){
-    handleDatabaseActions()
-
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(key1 = action){
-        if (action == Action.DELETE_CARD){
-            scope.launch {
-                val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
-                    message = "${action.name}: $cardTitle",
-                    actionLabel = "UNDO_CARD"
-                )
-                undoDeletedCard(action = action,
-                snackBarResult = snackBarResult,
-                onUndoClicked = onUndoClicked)
-            }
-        }
-    }
-}
-
-private fun undoDeletedCard(
-    action: Action,
-    snackBarResult: SnackbarResult,
-    onUndoClicked: (Action)-> Unit
-){
-    if (snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE_CARD){
-        onUndoClicked(Action.UNDO_CARD)
     }
 }
