@@ -1,6 +1,7 @@
 package com.example.flashcard.screens.card
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,6 +25,9 @@ fun CardScreen(
     val questionRelativePosition: String by cardViewModel.questionRelativePosition
 
     val context = LocalContext.current
+
+    Log.d("CardScreen", "$question")
+
     Scaffold(
     topBar = {
         CardAppBar(
@@ -43,19 +47,37 @@ fun CardScreen(
         )
     },
     content = {
-        CardContent(
-        question = question,
-            reponseRelativePosition = reponseRelativePosition,
-        onQuestionChange = {question, questionRelativePosition ->
-            cardViewModel.question.value = question
-            cardViewModel.questionRelativePosition.value = questionRelativePosition},
-        reponse = reponse,
-            questionRelativePosition = questionRelativePosition,
-        onReponseChange = {reponse, reponseRelativePosition->
-            cardViewModel.reponse.value = reponse
-            cardViewModel.reponseRelativePosition.value = reponseRelativePosition},
-            cardViewModel = cardViewModel
-    )
+        if (selectedCard != null){
+            CardContent(
+                question = question,
+                reponseRelativePosition = reponseRelativePosition,
+                onQuestionChange = {question, questionRelativePosition ->
+                    cardViewModel.question.value = question
+                    cardViewModel.questionRelativePosition.value = questionRelativePosition},
+                reponse = reponse,
+                questionRelativePosition = questionRelativePosition,
+                onReponseChange = {reponse, reponseRelativePosition->
+                    cardViewModel.reponse.value = reponse
+                    cardViewModel.reponseRelativePosition.value = reponseRelativePosition},
+                cardViewModel = cardViewModel
+            )
+        }
+        else{
+            CardContent(
+                question = "",
+                reponseRelativePosition = "",
+                onQuestionChange = {question, questionRelativePosition ->
+                    cardViewModel.question.value = question
+                    cardViewModel.questionRelativePosition.value = questionRelativePosition},
+                reponse = "",
+                questionRelativePosition = "",
+                onReponseChange = {reponse, reponseRelativePosition->
+                    cardViewModel.reponse.value = reponse
+                    cardViewModel.reponseRelativePosition.value = reponseRelativePosition},
+                cardViewModel = cardViewModel
+            )
+        }
+
     }
 )
 }

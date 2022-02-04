@@ -25,7 +25,6 @@ import com.example.flashcard.database.Card
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 import com.example.flashcard.database.FolderWithCards
-import com.example.flashcard.screens.folder.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
 

@@ -34,10 +34,11 @@ fun ListScreen(
     navigateToRevisionScreen: (Int) -> Unit
 )
 {
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = selectedFolder){
         cardViewModel.getSelectedFolder(selectedFolder.folderId)
         cardViewModel.getFolderWithCards(selectedFolder.folderId)
     }
+    val action by cardViewModel.action
 
     val folderWithCardsList by cardViewModel.getFolderWithCards.collectAsState()
     val selceF by cardViewModel.selectedFolder.collectAsState()
@@ -46,6 +47,8 @@ fun ListScreen(
     val searchTextState: String by cardViewModel.searchTextState
 
     val scaffoldState = rememberScaffoldState()
+
+    cardViewModel.handleDatabaseAction(action = action)
 
 Scaffold(
     scaffoldState = scaffoldState,
@@ -69,8 +72,7 @@ Scaffold(
         onSwipeToDelete = {
             action, card ->
             cardViewModel.action.value = action
-            cardViewModel.updateSelectedCard(selectedCard = card, selectedFolderId=selectedFolder.folderId)
-        }
+        },cardViewModel = cardViewModel
     )},
     floatingActionButton = {
         ListFab(onLearnClicked = navigateToLearningScreen, onRevisionClicked = navigateToRevisionScreen, selectedFolder = selectedFolder.folderId)
@@ -94,7 +96,9 @@ fun ListFab(
         Dialog(onDismissRequest = { openDialog = false },
             properties = DialogProperties(dismissOnClickOutside = true),
             content = {
-                Surface(modifier = Modifier.widthIn(180.dp).heightIn(180.dp), shape = RectangleShape, border = BorderStroke(1.dp, Color.LightGray)) {
+                Surface(modifier = Modifier
+                    .widthIn(180.dp)
+                    .heightIn(180.dp), shape = RectangleShape, border = BorderStroke(1.dp, Color.LightGray)) {
                 Column(modifier = Modifier.fillMaxWidth()){
                     Text(modifier = Modifier.padding(10.dp), fontSize = 30.sp, text = "Type of learning", textAlign = TextAlign.Left)
                 Text(

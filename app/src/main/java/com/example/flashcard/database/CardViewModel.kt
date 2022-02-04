@@ -193,7 +193,7 @@ class CardViewModel @Inject constructor(
     val searchFolders: StateFlow<RequestState<List<Folder>>> = _searchFolders
 
     val folderName: MutableState<String> = mutableStateOf("")
-    val ancientFolderId: MutableState<Int> = mutableStateOf(0)
+    val ancientFolderName: MutableState<String> = mutableStateOf("")
     val folderRelativePosition: MutableState<String> = mutableStateOf("")
 
     fun searchDatabaseFolder(searchQuery: String){
@@ -228,7 +228,7 @@ class CardViewModel @Inject constructor(
     }
 
     private val _selectedFolder: MutableStateFlow<Folder?> = MutableStateFlow(null)
-    val selectedFolder: StateFlow<Folder?> = _selectedFolder
+    var selectedFolder: StateFlow<Folder?> = _selectedFolder
 
     fun getSelectedFolder(folderId: Int?){
         viewModelScope.launch{
@@ -272,12 +272,7 @@ class CardViewModel @Inject constructor(
         }
     }
 
-    private fun updateSelectedFolder(card: RequestState<List<FolderWithCards>>){
-        if (card is RequestState.Success){
-                card.data.first().cards.forEach{ car ->
-                    updateSelectedCard(car, folderid.value)
-                    updateSelectedCard()
-            }
+    private fun updateSelectedFolder(){
         viewModelScope.launch(Dispatchers.IO){
             val folder  =Folder(
                 folderId = folderid.value,
@@ -286,14 +281,6 @@ class CardViewModel @Inject constructor(
             )
             repository.updateFolder(folder = folder)
         }
-        getFolderWithCards(folderid.value)
-    }
-    }
-
-    private fun updateSelectedFolder(){
-        getFolderWithCards(ancientFolderId.value)
-        val cardList = getFolderWithCards.value
-        updateSelectedFolder(cardList)
     }
 
     private val  _getFolderWithCards = MutableStateFlow<RequestState<List<FolderWithCards>>>(RequestState.Idle)

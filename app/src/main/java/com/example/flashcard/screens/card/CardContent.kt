@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.flashcard.KeyboardAffiched
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.handleAction
-import com.example.flashcard.screens.folder.redBar
+import com.example.flashcard.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
 

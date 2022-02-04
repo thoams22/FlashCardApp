@@ -7,8 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.flashcard.Constants
 import com.example.flashcard.Action
+import com.example.flashcard.Constants
 import com.example.flashcard.Constants.CARD_ARGUMENT_KEY
 import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.screens.card.CardScreen
@@ -30,8 +30,8 @@ fun NavGraphBuilder.cardComposable(
         LaunchedEffect(key1 = selectedCard){
             if (selectedCard != null || cardId == -1){
             cardViewModel.updateSelectedCard(selectedCard=selectedCard, selectedFolderId=selectedFolder!!.folderId)
-        }}
-
+            }
+        }
     CardScreen(selectedCard = selectedCard,
         navigateToListScreen = navigateToListScreen,
         cardViewModel = cardViewModel, selectedFolder = selectedFolder)

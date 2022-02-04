@@ -139,11 +139,14 @@ fun DisplayFolder(
                     .fillMaxHeight(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically) {
+
                     var openDialog by remember {
                         mutableStateOf(false)
                     }
+
                     IconButton(
                         onClick = {
+                            cardViewModel.updateSelectedFolder(folder)
                             cardViewModel.getFolderWithCards(folder.folderId)
                             openDialog = true
                         },
@@ -161,7 +164,7 @@ fun DisplayFolder(
                                             Text(modifier = Modifier.padding(10.dp), fontSize = 30.sp, text = "DELETE ?", textAlign = TextAlign.Left)
                                             Text(
                                                 modifier = Modifier.padding(10.dp),
-                                                text = "Are ou sure you want to delete this folder"
+                                                text = "Are ou sure you want to delete this folder \nand all the card in it ?"
                                             )
                                             Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                                                 OutlinedButton(modifier = Modifier.padding(10.dp),onClick = { openDialog = false }) {
@@ -189,6 +192,7 @@ fun DisplayFolder(
                     Divider(modifier = Modifier.width(5.dp), thickness = 0.dp)
                     IconButton(
                         onClick = {
+                            cardViewModel.updateSelectedFolder(folder)
                             onModifyClicked(folder.folderId)
                         },
                         modifier = Modifier

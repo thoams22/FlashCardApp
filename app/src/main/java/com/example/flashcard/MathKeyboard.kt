@@ -19,8 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.flashcard.KeyboardState.*
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.screens.folder.lengthRedBar
-import com.example.flashcard.screens.folder.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
 
@@ -28,6 +26,8 @@ const val divider = 11.0
 const val dividerAction = 8
 const val heightSpaceBar = 25
 const val divHeight = 15
+const val lengthRedBar = 18
+const val redBar = "\\textcolor{red}{|}"
 
 @Composable
 fun Keyboard(cardViewModel: CardViewModel, onKeyPressed: (text:String, taille:String)-> Unit, onPositionChanged:(String)->Unit) {

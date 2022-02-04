@@ -13,14 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.flashcard.handleAction
 import com.example.flashcard.KeyboardAffiched
 import com.example.flashcard.database.CardViewModel
+import com.example.flashcard.handleAction
+import com.example.flashcard.redBar
 import com.wakaztahir.composejlatex.LatexAlignment
 import com.wakaztahir.composejlatex.latexImageBitmap
-
-const val lengthRedBar = 18
-const val redBar = "\\textcolor{red}{|}"
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -32,6 +30,7 @@ fun FolderContent(
     cardViewModel: CardViewModel
 ){
     val textColor = MaterialTheme.colors.onSurface
+
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp), content = {
@@ -40,6 +39,12 @@ fun FolderContent(
         var position by remember { mutableStateOf(0)}
         var relativePosition by remember { mutableStateOf(folderRelativePosition)}
         var positionInRelative by remember { mutableStateOf(0)}
+
+        LaunchedEffect(key1 = folderName) {
+            latex = redBar + folderName
+            relativePosition = folderRelativePosition
+        }
+
         val context = LocalContext.current
 
         var  imageBitmap by remember {

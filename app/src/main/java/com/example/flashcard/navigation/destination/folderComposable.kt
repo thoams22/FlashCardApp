@@ -28,18 +28,16 @@ fun NavGraphBuilder.folderComposable(
     ){ navBackStackEntry ->
         val folderId = navBackStackEntry.arguments?.getInt(FOLDER_ARGUMENT_KEY)
 
-        if (folderId != null) {
-            cardViewModel.getSelectedFolder(folderId = folderId)
-        }
+        cardViewModel.getSelectedFolder(folderId = folderId)
+
         val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
-        LaunchedEffect(key1 = selectedFolder){
+        LaunchedEffect(key1 = true){
             if (selectedFolder != null || folderId == -1){
                 cardViewModel.updateSelectedFolder(selectedFolder=selectedFolder)
             }}
 
         FolderScreen(
-            selectedFolder = selectedFolder,
             navigateToFolderListScreen = navigateToFolderListScreen,
             cardViewModel = cardViewModel
         )

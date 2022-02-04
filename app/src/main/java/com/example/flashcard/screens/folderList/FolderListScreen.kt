@@ -17,8 +17,7 @@ fun FolderListScreen(
     navigateToListScreen: (Action, Int) -> Unit,
     navigateToFolderScreen: (Int)-> Unit,
     cardViewModel: CardViewModel
-)
-{
+) {
     LaunchedEffect(key1 = true){
     cardViewModel.readAllFolder()
 }

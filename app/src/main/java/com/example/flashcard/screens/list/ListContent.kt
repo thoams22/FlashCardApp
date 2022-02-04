@@ -26,6 +26,7 @@ import com.example.flashcard.Action
 import com.example.flashcard.RequestState
 import com.example.flashcard.SearchAppBarState
 import com.example.flashcard.database.Card
+import com.example.flashcard.database.CardViewModel
 import com.example.flashcard.database.Folder
 import com.example.flashcard.database.FolderWithCards
 import com.wakaztahir.composejlatex.LatexAlignment
@@ -42,11 +43,12 @@ fun ListContent(
     searchedCards: RequestState<List<Card>>,
     searchAppBarState: SearchAppBarState,
     navigateToTaskScreen: (cardId: Int) -> Unit,
-    onSwipeToDelete: (Action, Card)->Unit
+    onSwipeToDelete: (Action, Card)->Unit,
+    cardViewModel: CardViewModel
 ){
     if (searchAppBarState == SearchAppBarState.TRIGGERED){
         if (searchedCards is RequestState.Success){
-            HandleListContentSearched(folder= folder, cards = searchedCards.data, onModifyClicked = navigateToTaskScreen, onDeleteClicked = onSwipeToDelete)
+            HandleListContentSearched(folder= folder, cards = searchedCards.data, onModifyClicked = navigateToTaskScreen, onDeleteClicked = onSwipeToDelete,cardViewModel = cardViewModel)
         }
     }else{
         if (cards is RequestState.Success){
@@ -55,7 +57,8 @@ fun ListContent(
                     folder = folder,
                     cards = cards.data,
                     onModifyClicked = navigateToTaskScreen,
-                    onDeleteClicked = onSwipeToDelete
+                    onDeleteClicked = onSwipeToDelete,
+                    cardViewModel = cardViewModel
                 )}
         else{
                 EmptyContent()
@@ -71,13 +74,14 @@ fun HandleListContent(
     cards: List<FolderWithCards>,
     folder: Folder?,
     onDeleteClicked: (Action, Card)->Unit,
-    onModifyClicked: (cardId: Int) -> Unit
+    onModifyClicked: (cardId: Int) -> Unit,
+    cardViewModel: CardViewModel
 
 ){
     if(cards.first().cards.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(folder = folder, cards = cards.first().cards, onModifyClicked = onModifyClicked, onDeleteClicked = onDeleteClicked)
+        DisplayCard(folder = folder, cards = cards.first().cards, onModifyClicked = onModifyClicked, onDeleteClicked = onDeleteClicked, cardViewModel = cardViewModel)
     }
 }
 
@@ -89,19 +93,20 @@ fun HandleListContentSearched(
     folder: Folder?,
     cards: List<Card>,
     onDeleteClicked: (Action, Card)->Unit,
-    onModifyClicked: (cardId: Int) -> Unit
+    onModifyClicked: (cardId: Int) -> Unit,
+    cardViewModel: CardViewModel
 ){
     if(cards.isEmpty()){
         EmptyContent()
     }else{
-        DisplayCard(folder = folder, cards = cards, onModifyClicked = onModifyClicked, onDeleteClicked = onDeleteClicked)
+        DisplayCard(folder = folder, cards = cards, onModifyClicked = onModifyClicked, onDeleteClicked = onDeleteClicked, cardViewModel = cardViewModel)
     }
 }
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
-fun DisplayCard(folder: Folder?,cards: List<Card>, onModifyClicked: (cardId: Int) -> Unit, onDeleteClicked: (Action, Card)->Unit){
+fun DisplayCard(folder: Folder?,cards: List<Card>, onModifyClicked: (cardId: Int) -> Unit, onDeleteClicked: (Action, Card)->Unit, cardViewModel: CardViewModel){
     val textColor = MaterialTheme.colors.onSurface
     LazyColumn{
         stickyHeader{
@@ -158,6 +163,7 @@ fun DisplayCard(folder: Folder?,cards: List<Card>, onModifyClicked: (cardId: Int
                     verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = {
+                            cardViewModel.updateSelectedCard(card, card.folderId)
                             onDeleteClicked(Action.DELETE_CARD, card)
                         },
                         modifier = Modifier
@@ -175,6 +181,7 @@ fun DisplayCard(folder: Folder?,cards: List<Card>, onModifyClicked: (cardId: Int
                     Divider(modifier = Modifier.width(5.dp), thickness = 0.dp)
                     IconButton(
                         onClick = {
+                            cardViewModel.updateSelectedCard(card, card.folderId)
                             onModifyClicked(card.cardId)
                         },
                         modifier = Modifier

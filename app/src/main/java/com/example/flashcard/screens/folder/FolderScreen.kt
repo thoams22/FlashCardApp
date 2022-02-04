@@ -5,24 +5,27 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import com.example.flashcard.Action
 import com.example.flashcard.KeyboardState
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.database.Folder
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @Composable
 fun FolderScreen(
-    selectedFolder: Folder?,
     navigateToFolderListScreen: (Action)->Unit,
     cardViewModel: CardViewModel
 ){
+    val selectedFolder by cardViewModel.selectedFolder.collectAsState()
+
     if (selectedFolder != null) {
-        cardViewModel.ancientFolderId.value = selectedFolder.folderId
+        cardViewModel.ancientFolderName.value = selectedFolder!!.folderName
     }
+
     val context = LocalContext.current
     cardViewModel.keyboardState.value = KeyboardState.DEFAULT
 
@@ -45,8 +48,8 @@ fun FolderScreen(
         content = {
             if(selectedFolder != null){
                 FolderContent(
-                    folderName = selectedFolder.folderName,
-                    folderRelativePosition = selectedFolder.folderRelativePosition,
+                    folderName = selectedFolder!!.folderName,
+                    folderRelativePosition = selectedFolder!!.folderRelativePosition,
                     onFolderNameChange = {folderName: String, folderRelativePosition: String ->
                         cardViewModel.folderName.value = folderName
                         cardViewModel.folderRelativePosition.value = folderRelativePosition},
