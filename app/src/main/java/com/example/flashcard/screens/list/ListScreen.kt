@@ -90,8 +90,10 @@ fun ListFab(
         mutableStateOf(false)
     }
     FloatingActionButton(onClick = {
-        openDialog = true
-
+        //openDialog = true
+        if (selectedFolder != null) {
+            onRevisionClicked(selectedFolder)
+        }
     }) {if(openDialog){
         Dialog(onDismissRequest = { openDialog = false },
             properties = DialogProperties(dismissOnClickOutside = true),
@@ -106,10 +108,18 @@ fun ListFab(
                     text = "Revision help to familiarize with the cards\nLearning is a methods to verify that you now the cards"
                 )
                 Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = { onLearnClicked(selectedFolder!!) }) {
+                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = {
+                        if (selectedFolder != null) {
+                            onLearnClicked(selectedFolder)
+                        }
+                    }) {
                         Text(text = "Learning")
                     }
-                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = {onRevisionClicked(selectedFolder!!)}) {
+                    OutlinedButton(modifier = Modifier.padding(10.dp),onClick = {
+                        if (selectedFolder != null) {
+                            onRevisionClicked(selectedFolder)
+                        }
+                    }) {
                         Text(text = "Revision")
                     }
                 }

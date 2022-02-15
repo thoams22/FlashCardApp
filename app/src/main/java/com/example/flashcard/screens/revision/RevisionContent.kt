@@ -26,7 +26,9 @@ import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.flashcard.Action
 import com.example.flashcard.RequestState
 import com.example.flashcard.RevisionState
@@ -56,9 +58,7 @@ fun RevisionContent(
             cardViewModel.cardList = folderWithCards.data.first().cards.shuffled().toMutableList()
         }
         if(cardViewModel.cardList.isNotEmpty()){
-            val cards = cardViewModel.cardList
             AnsweringContent(
-                cards = cards,
                 revisionState = revisionState,
                 cardViewModel = cardViewModel,
                 navigateToRevisionScreen = navigateToRevisionScreen,
@@ -75,8 +75,7 @@ enum class SwipeResult{
 
 @ExperimentalMaterialApi
 @Composable
-fun AnsweringContent(cards: MutableList<Card>,
-                     revisionState: RevisionState,
+fun AnsweringContent(revisionState: RevisionState,
                      cardViewModel: CardViewModel,
                      navigateToListScreen: (Action, Int)->Unit,
                      selectedFolder: Folder?,
@@ -85,7 +84,7 @@ fun AnsweringContent(cards: MutableList<Card>,
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val cardHeight = screenHeight - 150.dp
-    val cardNbr = mutableListOf<Card>()
+    var cardNbr = 0
     val revState:RevisionState = if(revisionState == RevisionState.REPONSE){
         RevisionState.QUESTION
     }else{
@@ -96,7 +95,7 @@ fun AnsweringContent(cards: MutableList<Card>,
     ) {
         Box(modifier = Modifier.background(Color.LightGray)) {
             val listEmpty = remember { mutableStateOf(false) }
-            cards.forEach { card ->
+            cardViewModel.cardList.forEach { card ->
                 DraggableCard(
                     revState = revState,
                     cardViewModel = cardViewModel,
@@ -112,14 +111,15 @@ fun AnsweringContent(cards: MutableList<Card>,
                         ),
                     onSwiped = { result, swipedCard ->
                         if (result == SwipeResult.REJECTED) {
-                            cards.remove(swipedCard)
-                            cardNbr.add(swipedCard)
-                            if (cards.isEmpty()) {
+                            if (cardViewModel.cardList.remove(swipedCard)){
+                                cardNbr+=1
+                            }
+                            if (cardViewModel.cardList.isEmpty()) {
                                 listEmpty.value = true
                             }
                         } else if (result == SwipeResult.ACCEPTED) {
-                            cards.remove(swipedCard)
-                            if (cards.isEmpty()) {
+                            cardViewModel.cardList.remove(swipedCard)
+                            if (cardViewModel.cardList.isEmpty()) {
                                 listEmpty.value = true
                             }
                         }
@@ -129,6 +129,19 @@ fun AnsweringContent(cards: MutableList<Card>,
                 }
             }
             if(listEmpty.value) {
+                Text(
+                    text = when(cardNbr){
+                        1 -> "You dont know\n$cardNbr card"
+                        0 -> "You know everything"
+                        else -> {"You dont know\n$cardNbr cards"}
+                    },
+                    fontSize = 55.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = cardHeight / 3),
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
@@ -137,7 +150,6 @@ fun AnsweringContent(cards: MutableList<Card>,
                 ) {
                     IconButton(
                         onClick = {
-                            cardViewModel.cardList = mutableListOf()
                             navigateToRevisionScreen(selectedFolder!!.folderId)
                         },
                         modifier = Modifier

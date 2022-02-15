@@ -18,6 +18,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete_card">Remove \'%1$s\'?</string>
+    <string name="wrong_number">You dind\'nt know \'%1$s\' card</string>
     <string name="delete_card_confirmation">Are you sure you want to delete \'%1$s\'?</string>
     <string name="add_folder">Add folder</string>
     <string name="folderName">Name of folder</string>
