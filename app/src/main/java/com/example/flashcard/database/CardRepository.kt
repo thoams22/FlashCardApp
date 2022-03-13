@@ -1,7 +1,5 @@
 package com.example.flashcard.database
 
-import android.app.Application
-import androidx.lifecycle.LiveData
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -9,17 +7,17 @@ import javax.inject.Inject
 @ViewModelScoped
 class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
 
-    val readAll: Flow<List<Card>> = cardDao.readAll()
+    //val readAllCard: Flow<List<Card>> = cardDao.readAllCard() USE TO SEE IF CARD ARE DELETED WITH FOLDER
 
-     fun getSelected(cardId: Int): Flow<Card>{
-        return cardDao.getSelected(cardId)
+     fun getSelectedCard(cardId: Int): Flow<Card>{
+        return cardDao.getSelectedCard(cardId)
     }
 
-    suspend fun insert(card: Card){
-        cardDao.insert(card = card)
+    suspend fun insertCard(card: Card){
+        cardDao.insertCard(card = card)
     }
 
-    suspend fun update(card: Card){
+    suspend fun updateCard(card: Card){
         cardDao.update(card = card)
     }
 
@@ -27,9 +25,33 @@ class CardRepository @Inject constructor(private val cardDao: CardDatabaseDao){
         cardDao.deleteCard(card = card)
     }
 
-    fun searchDatabase(searchQuery: String): Flow<List<Card>>{
-        return cardDao.searchDatabase(searchQuery = searchQuery)
+    val readAllFolder: Flow<List<Folder>> = cardDao.readAllFolder()
+
+    fun searchDatabaseCard(searchQuery: String, folderId: Int): Flow<List<Card>>{
+        return cardDao.searchDatabaseCard(searchQuery = searchQuery, folderId = folderId)
     }
 
 
+    fun searchDatabaseFolder(searchQuery: String): Flow<List<Folder>>{
+        return cardDao.searchDatabaseFolder(searchQuery = searchQuery)
+    }
+
+    fun getSelectedFolder(folderId: Int?): Flow<Folder>{
+        return cardDao.getSelectedFolder(folderId)
+    }
+
+    suspend fun insertFolder(folder: Folder){
+        cardDao.insertFolder(folder = folder)
+    }
+
+    suspend fun deleteFolder(folder: Folder){
+        cardDao.deleteFolder(folder = folder)
+    }
+
+    suspend fun updateFolder(folder: Folder){
+        cardDao.updateFolder(folder = folder)
+    }
+
+    fun getFolderWithCards(folderId: Int): Flow<List<FolderWithCards>>{
+        return cardDao.getFolderWithCards(folderId)}
 }

@@ -60,7 +60,6 @@ fun CardContent(
             .clickable {
                 focus = "Question"
                 latexR = latexR.replace(redBar, "")
-                latexQ = latexQ.replace(redBar, "")
                 latexQ = latexQ.substring(0, positionQ) + redBar + latexQ.substring(positionQ)
             },
         ) {
@@ -76,7 +75,6 @@ fun CardContent(
             .clickable {
                 focus = "Reponse"
                 latexQ = latexQ.replace(redBar, "")
-                latexR = latexR.replace(redBar, "")
                 latexR = latexR.substring(0, positionR) + redBar + latexR.substring(positionR)
             },
         ) {

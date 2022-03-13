@@ -92,10 +92,8 @@ fun ListFab(
     FloatingActionButton(onClick = {
         //openDialog = true
         if (selectedFolder != null) {
-          //  onRevisionClicked(selectedFolder)
-            onLearnClicked(selectedFolder)
+            onRevisionClicked(selectedFolder)
         }
-
     }) {if(openDialog){
         Dialog(onDismissRequest = { openDialog = false },
             properties = DialogProperties(dismissOnClickOutside = true),

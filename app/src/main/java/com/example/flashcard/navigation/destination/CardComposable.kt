@@ -3,38 +3,38 @@ package com.example.flashcard.navigation.destination
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import com.example.flashcard.constants
+import androidx.navigation.navArgument
 import com.example.flashcard.Action
-import com.example.flashcard.constants.TASK_ARGUMENT_KEY
-import com.example.flashcard.database.Card
+import com.example.flashcard.Constants
+import com.example.flashcard.Constants.CARD_ARGUMENT_KEY
 import com.example.flashcard.database.CardViewModel
-import com.example.flashcard.ui.theme.screens.card.CardScreen
+import com.example.flashcard.screens.card.CardScreen
 
-fun NavGraphBuilder.taskComposable(
+fun NavGraphBuilder.cardComposable(
     cardViewModel: CardViewModel,
-    navigateToListScreen: (Action) -> Unit){
+    navigateToListScreen: (Action, Int) -> Unit){
     composable(
-        route = constants.TASK_SCREEN,
-        arguments = listOf(navArgument(constants.TASK_ARGUMENT_KEY){
+        route = Constants.CARD_SCREEN,
+        arguments = listOf(navArgument(CARD_ARGUMENT_KEY){
             type = NavType.IntType
         })
     ){ navBackStackEntry ->
-        val cardId = navBackStackEntry.arguments!!.getInt(TASK_ARGUMENT_KEY)
-        cardViewModel.getSelected(cardId = cardId)
+        val cardId = navBackStackEntry.arguments!!.getInt(CARD_ARGUMENT_KEY)
+        cardViewModel.getSelectedCard(cardId = cardId)
         val selectedCard by cardViewModel.selectedCard.collectAsState()
+        val selectedFolder by cardViewModel.selectedFolder.collectAsState()
 
         LaunchedEffect(key1 = selectedCard){
             if (selectedCard != null || cardId == -1){
-            cardViewModel.update(selectedCard=selectedCard)
-        }}
-
+            cardViewModel.updateSelectedCard(selectedCard=selectedCard, selectedFolderId=selectedFolder!!.folderId)
+            }
+        }
     CardScreen(selectedCard = selectedCard,
         navigateToListScreen = navigateToListScreen,
-        cardViewModel = cardViewModel)
+        cardViewModel = cardViewModel, selectedFolder = selectedFolder)
     }
 }
+

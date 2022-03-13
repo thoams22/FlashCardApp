@@ -2,7 +2,6 @@ package com.example.flashcard.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.transition.Visibility
 import com.example.flashcard.database.CardDatabase
 import dagger.Module
 import dagger.Provides
@@ -27,5 +26,6 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun  provideDao(database: CardDatabase) = database.cardDatabaseDao()
+    fun provideDao(database: CardDatabase) = database.cardDatabaseDao()
+
 }
